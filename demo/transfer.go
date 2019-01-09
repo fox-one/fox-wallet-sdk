@@ -50,6 +50,8 @@ func doWithdraw(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, as
 		log.Panicln(e)
 	}
 
+	log.Println("ping done")
+
 	withdrawInput := &sdk.WithdrawInput{
 		WithdrawAddress: mixin.WithdrawAddress{
 			AssetID:   assetID,
