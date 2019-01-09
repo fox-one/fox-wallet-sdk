@@ -11,7 +11,7 @@ import (
 )
 
 // GenerateToken generate jwt token
-func (broker *Broker) GenerateToken(userID, pinToken, nonce string) (string, error) {
+func (broker *Broker) GenerateToken(userID, pinToken, nonce string, expire int64) (string, error) {
 	jwtMap := map[string]interface{}{
 		"i": broker.brokerID,
 	}
@@ -23,7 +23,7 @@ func (broker *Broker) GenerateToken(userID, pinToken, nonce string) (string, err
 		jwtMap["pt"] = pinToken
 	}
 
-	token, err := broker.Sign(jwtMap, time.Now().Unix()+60, nonce)
+	token, err := broker.Sign(jwtMap, time.Now().Unix()+expire, nonce)
 	if err != nil {
 		return "", err
 	}
@@ -57,7 +57,7 @@ func (broker *Broker) RequestWithPIN(ctx context.Context, userID, pinToken, nonc
 		body = b
 	}
 
-	token, err := broker.GenerateToken(userID, pinToken, nonce)
+	token, err := broker.GenerateToken(userID, pinToken, nonce, 60)
 	if err != nil {
 		return nil, err
 	}
