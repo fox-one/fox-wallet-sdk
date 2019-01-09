@@ -97,7 +97,8 @@ func main() {
 
 	time.Sleep(10 * time.Second)
 	doSnapshot(ctx, b, userID, "", snapshot.SnapshotID)
-	doSnapshots(ctx, b, userID, "")
+	_, offset := doSnapshots(ctx, b, userID, "")
+	log.Println("next offset", offset)
 
 	doAsset(ctx, b, userID, assetID)
 	doAssets(ctx, b, userID)

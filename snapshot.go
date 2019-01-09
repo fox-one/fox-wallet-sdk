@@ -3,7 +3,6 @@ package sdk
 import (
 	"context"
 	"encoding/json"
-	"time"
 )
 
 // Snapshot snapshot
@@ -56,14 +55,11 @@ func (broker *Broker) FetchSnapshot(ctx context.Context, userID, traceID, snapsh
 }
 
 // FetchSnapshots fetch snapshots
-func (broker *Broker) FetchSnapshots(ctx context.Context, userID, assetID string, offset time.Time, order string, limit int) ([]*Snapshot, error) {
+func (broker *Broker) FetchSnapshots(ctx context.Context, userID, assetID string, offset int64, order string, limit int) ([]*Snapshot, int64, error) {
 	paras := map[string]interface{}{
 		"order":    order,
 		"asset_id": assetID,
-	}
-
-	if !offset.IsZero() {
-		paras["offset"] = offset.UnixNano()
+		"offset":   offset,
 	}
 
 	if limit > 0 {
@@ -72,19 +68,20 @@ func (broker *Broker) FetchSnapshots(ctx context.Context, userID, assetID string
 
 	b, err := broker.Request(ctx, userID, "POST", "/api/snapshots", paras)
 	if err != nil {
-		return nil, requestError(err)
+		return nil, offset, requestError(err)
 	}
 
 	var data struct {
 		Error
-		Snapshots []*Snapshot `json:"data"`
+		Snapshots  []*Snapshot `json:"data"`
+		NextOffset int64       `json:"next_offset"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, requestError(err)
+		return nil, offset, requestError(err)
 	}
 
 	if data.Code == 0 {
-		return data.Snapshots, nil
+		return data.Snapshots, data.NextOffset, nil
 	}
-	return nil, &data.Error
+	return nil, offset, &data.Error
 }
