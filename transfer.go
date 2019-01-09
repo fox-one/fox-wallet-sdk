@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/fox-one/fox-wallet/models"
 	"github.com/fox-one/mixin-sdk/mixin"
 )
 
@@ -18,7 +17,7 @@ type WithdrawInput struct {
 }
 
 // Transfer transfer to account
-func (broker *Broker) Transfer(ctx context.Context, userID, pin, nonce string, input *mixin.TransferInput) (*models.Snapshot, *Error) {
+func (broker *Broker) Transfer(ctx context.Context, userID, pin, nonce string, input *mixin.TransferInput) (*Snapshot, error) {
 	paras := map[string]interface{}{
 		"asset_id":    input.AssetID,
 		"opponent_id": input.OpponentID,
@@ -34,7 +33,7 @@ func (broker *Broker) Transfer(ctx context.Context, userID, pin, nonce string, i
 
 	var data struct {
 		Error
-		Snapshot *models.Snapshot `json:"data,omitempty"`
+		Snapshot *Snapshot `json:"data,omitempty"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
 		return nil, requestError(err)
@@ -48,7 +47,7 @@ func (broker *Broker) Transfer(ctx context.Context, userID, pin, nonce string, i
 
 // Withdraw withdraw to address
 //	address_id, opponent_id, amount, traceID, memo
-func (broker *Broker) Withdraw(ctx context.Context, userID, pin, nonce string, input *WithdrawInput) (*models.Snapshot, *Error) {
+func (broker *Broker) Withdraw(ctx context.Context, userID, pin, nonce string, input *WithdrawInput) (*Snapshot, error) {
 	paras := map[string]interface{}{
 		"asset_id": input.AssetID,
 		"trace_id": input.TraceID,
@@ -71,7 +70,7 @@ func (broker *Broker) Withdraw(ctx context.Context, userID, pin, nonce string, i
 
 	var data struct {
 		Error
-		Snapshot *models.Snapshot `json:"data,omitempty"`
+		Snapshot *Snapshot `json:"data,omitempty"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
 		return nil, requestError(err)
@@ -84,7 +83,7 @@ func (broker *Broker) Withdraw(ctx context.Context, userID, pin, nonce string, i
 }
 
 // FetchWithdrawFee fetch withdraw fee
-func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin, nonce string, input *mixin.WithdrawAddress) (string, *Error) {
+func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin, nonce string, input *mixin.WithdrawAddress) (string, error) {
 	paras := map[string]interface{}{
 		"asset_id": input.AssetID,
 		"pin":      pin,

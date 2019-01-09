@@ -5,10 +5,9 @@ import (
 	"log"
 
 	sdk "github.com/fox-one/fox-wallet-sdk"
-	"github.com/fox-one/fox-wallet/models"
 )
 
-func doCreateUser(ctx context.Context, b *sdk.Broker, pin string) *models.UserExported {
+func doCreateUser(ctx context.Context, b *sdk.Broker, pin string) *sdk.User {
 	u, e := b.CreateUser(ctx, "Charlie", pin)
 	if e != nil {
 		log.Panicln(e)

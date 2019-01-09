@@ -5,10 +5,9 @@ import (
 	"log"
 
 	sdk "github.com/fox-one/fox-wallet-sdk"
-	"github.com/fox-one/fox-wallet/models"
 )
 
-func doAssets(ctx context.Context, b *sdk.Broker, userID string) []*models.UserAssetExported {
+func doAssets(ctx context.Context, b *sdk.Broker, userID string) []*sdk.UserAsset {
 	assets, err := b.FetchAssets(ctx, userID)
 	if err != nil {
 		log.Panicln(err)
@@ -18,7 +17,7 @@ func doAssets(ctx context.Context, b *sdk.Broker, userID string) []*models.UserA
 	return assets
 }
 
-func doAsset(ctx context.Context, b *sdk.Broker, userID string, assetID string) *models.UserAssetExported {
+func doAsset(ctx context.Context, b *sdk.Broker, userID string, assetID string) *sdk.UserAsset {
 	asset, err := b.FetchAsset(ctx, userID, assetID)
 	if err != nil {
 		log.Panicln(err)

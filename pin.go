@@ -6,7 +6,7 @@ import (
 )
 
 // ModifyPIN modify pin
-func (broker *Broker) ModifyPIN(ctx context.Context, userID, pin, nonce, newPIN string) *Error {
+func (broker *Broker) ModifyPIN(ctx context.Context, userID, pin, nonce, newPIN string) error {
 	paras := map[string]interface{}{
 		"pin": newPIN,
 	}
@@ -29,7 +29,7 @@ func (broker *Broker) ModifyPIN(ctx context.Context, userID, pin, nonce, newPIN 
 }
 
 // VerifyPIN verify pin
-func (broker *Broker) VerifyPIN(ctx context.Context, userID, pin, nonce string) *Error {
+func (broker *Broker) VerifyPIN(ctx context.Context, userID, pin, nonce string) error {
 	b, err := broker.RequestWithPIN(ctx, userID, pin, nonce, "POST", "/api/pin/verify", nil)
 	if err != nil {
 		return requestError(err)

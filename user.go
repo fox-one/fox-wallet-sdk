@@ -3,12 +3,17 @@ package sdk
 import (
 	"context"
 	"encoding/json"
-
-	"github.com/fox-one/fox-wallet/models"
 )
 
+// User user
+type User struct {
+	UserID   string `json:"user_id"`
+	BrokerID string `json:"broker_id,omitempty"`
+	FullName string `json:"full_name,omitempty"`
+}
+
 // CreateUser create user
-func (broker *Broker) CreateUser(ctx context.Context, fullname, pin string) (*models.UserExported, *Error) {
+func (broker *Broker) CreateUser(ctx context.Context, fullname, pin string) (*User, error) {
 	paras := map[string]interface{}{
 		"full_name": fullname,
 		"pin":       pin,
@@ -20,7 +25,7 @@ func (broker *Broker) CreateUser(ctx context.Context, fullname, pin string) (*mo
 
 	var data struct {
 		Error
-		User *models.UserExported `json:"data"`
+		User *User `json:"data"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
 		return nil, requestError(err)

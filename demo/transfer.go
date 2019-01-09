@@ -5,12 +5,11 @@ import (
 	"log"
 
 	sdk "github.com/fox-one/fox-wallet-sdk"
-	"github.com/fox-one/fox-wallet/models"
 	"github.com/fox-one/mixin-sdk/mixin"
 	"github.com/satori/go.uuid"
 )
 
-func doTransfer(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, assetID, amount, pin, nonce string) *models.Snapshot {
+func doTransfer(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, assetID, amount, pin, nonce string) *sdk.Snapshot {
 	input := &mixin.TransferInput{
 		AssetID:    assetID,
 		Amount:     amount,
@@ -38,7 +37,7 @@ func doTransfer(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, as
 	return snapshot
 }
 
-func doWithdraw(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, assetID, publicKey, amount, pin, nonce string) *models.Snapshot {
+func doWithdraw(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, assetID, publicKey, amount, pin, nonce string) *sdk.Snapshot {
 	input := &mixin.TransferInput{
 		AssetID:    assetID,
 		Amount:     amount,

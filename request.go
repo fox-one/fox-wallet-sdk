@@ -13,7 +13,7 @@ import (
 // GenerateToken generate jwt token
 func (broker *Broker) GenerateToken(userID, pinToken, nonce string) (string, error) {
 	jwtMap := map[string]interface{}{
-		"i": broker.BrokerID,
+		"i": broker.brokerID,
 	}
 	if len(userID) > 0 {
 		jwtMap["u"] = userID

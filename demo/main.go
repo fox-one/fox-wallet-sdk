@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/pem"
 	"time"
 
@@ -46,7 +47,21 @@ func main() {
 	dapp.SetPrivateKey(privateKey)
 
 	ctx := context.TODO()
-	b, _ := sdk.NewBroker(apiBase, brokerID, brokerSecret, brokerPINSecret)
+	var secret []byte
+	var pinSecret []byte
+	if s, err := base64.StdEncoding.DecodeString(brokerSecret); err != nil {
+		log.Panicln(err)
+	} else {
+		secret = s
+	}
+
+	if s, err := base64.StdEncoding.DecodeString(brokerPINSecret); err != nil {
+		log.Panicln(err)
+	} else {
+		pinSecret = s
+	}
+
+	b := sdk.NewBroker(apiBase, brokerID, secret, pinSecret)
 
 	assetID := "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 	publicKey := "0xe20FE5C04Fa6b044b720F8CA019Cd896881ED13B"
