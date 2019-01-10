@@ -98,8 +98,8 @@ func Sign(brokerSecret string, method, uri string, body []byte) (string, error) 
 //  Broker Sign Required
 //  Method: POST
 //  URL:    /api/snapshots?user
-//  Params: {"user_id":"xxx","asset_id":"xxx","offset":12345,"limit":5,"order":"ASC"}
-//  Return: {"data":[{Snapshot}],"next_offset":1234}
+//  Params: {"user_id":"xxx","asset_id":"xxx","offset":"xxxxx","limit":5,"order":"ASC"}
+//  Return: {"data":[{Snapshot}],"next_offset":"xxxxx"}
 ```
 
 ## Transfer

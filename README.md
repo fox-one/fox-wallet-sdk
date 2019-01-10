@@ -73,5 +73,5 @@ b.FetchSnapshot(ctx, userID, traceID, snapshotID)
 //  userID, assetID为可选;
 //  order为ASC/DESC;
 //  limit最大为500
-b.FetchSnapshots(ctx, userID, assetID, 0, "DESC", 100)
+b.FetchSnapshots(ctx, userID, assetID, "xxx", "DESC", 100)
 ```
