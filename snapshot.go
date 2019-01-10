@@ -55,7 +55,7 @@ func (broker *Broker) FetchSnapshot(ctx context.Context, userID, traceID, snapsh
 }
 
 // FetchSnapshots fetch snapshots
-func (broker *Broker) FetchSnapshots(ctx context.Context, userID, assetID string, offset int64, order string, limit int) ([]*Snapshot, int64, error) {
+func (broker *Broker) FetchSnapshots(ctx context.Context, userID, assetID string, offset string, order string, limit int) ([]*Snapshot, string, error) {
 	paras := map[string]interface{}{
 		"order":    order,
 		"asset_id": assetID,
@@ -74,7 +74,7 @@ func (broker *Broker) FetchSnapshots(ctx context.Context, userID, assetID string
 	var data struct {
 		Error
 		Snapshots  []*Snapshot `json:"data"`
-		NextOffset int64       `json:"next_offset"`
+		NextOffset string      `json:"next_offset"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
 		return nil, offset, requestError(err)

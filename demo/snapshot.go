@@ -17,8 +17,8 @@ func doSnapshot(ctx context.Context, b *sdk.Broker, userID, traceID, snapshotID 
 	return snapshot
 }
 
-func doSnapshots(ctx context.Context, b *sdk.Broker, userID string, assetID string) ([]*sdk.Snapshot, int64) {
-	snapshots, nextOffset, err := b.FetchSnapshots(ctx, userID, assetID, 0, "DESC", 100)
+func doSnapshots(ctx context.Context, b *sdk.Broker, userID string, assetID string) ([]*sdk.Snapshot, string) {
+	snapshots, nextOffset, err := b.FetchSnapshots(ctx, userID, assetID, "", "DESC", 100)
 	if err != nil {
 		log.Panicln(err)
 	}

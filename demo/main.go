@@ -79,7 +79,7 @@ func main() {
 	pinToken, nonce = ensurePinToken(b, default_pin)
 	doWithdraw(ctx, b, dapp, userID, assetID, publicKey, "0.1", pinToken, nonce)
 
-	time.Sleep(10 * time.Second)
+	time.Sleep(2 * time.Second)
 	doSnapshot(ctx, b, userID, "", snapshot.SnapshotID)
 	_, offset := doSnapshots(ctx, b, userID, "")
 	log.Println("next offset", offset)
