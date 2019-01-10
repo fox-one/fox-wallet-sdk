@@ -1,11 +1,12 @@
 package sdk
 
 import (
+	"encoding/base64"
 	"fmt"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/fox-one/mixin-sdk/utils"
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 const (
@@ -21,15 +22,27 @@ type Broker struct {
 }
 
 // NewBroker create broker
-func NewBroker(apiBase, brokerID string, secret []byte, pinSecret ...[]byte) *Broker {
+func NewBroker(apiBase, brokerID, secret, pinSecret string) *Broker {
 	b := &Broker{
 		brokerID: brokerID,
 		apiBase:  apiBase,
-		secret:   secret,
+		// secret:   secret,
 	}
-	if len(pinSecret) > 0 && len(pinSecret[0]) > 0 {
-		b.pinSecret = pinSecret[0]
+
+	s, err := base64.StdEncoding.DecodeString(secret)
+	if err != nil {
+		panic("secret is not base64")
 	}
+	b.secret = s
+
+	if len(pinSecret) > 0 {
+		ps, err := base64.StdEncoding.DecodeString(pinSecret)
+		if err != nil {
+			panic("pin secret is not base64")
+		}
+		b.pinSecret = ps
+	}
+
 	return b
 }
 
