@@ -20,15 +20,6 @@ func printJSON(prefix string, item interface{}) {
 	log.Println(prefix, msg)
 }
 
-func ensurePinToken(b *sdk.Broker, pin string, nonce ...string) (string, string) {
-	pinToken, n, err := b.PINToken(pin, nonce...)
-	if err != nil {
-		log.Panicln(err)
-	}
-
-	return pinToken, n
-}
-
 func main() {
 	log.SetLevel(log.DebugLevel)
 
@@ -50,18 +41,13 @@ func main() {
 
 	assetID := "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 	publicKey := "0xe20FE5C04Fa6b044b720F8CA019Cd896881ED13B"
-	var pinToken, nonce string
 
 	tmpPIN := "123456"
-	pinToken, nonce = ensurePinToken(b, tmpPIN)
-	userID := doCreateUser(ctx, b, pinToken).UserID
+	userID := doCreateUser(ctx, b, tmpPIN).UserID
 
-	pinToken, nonce = ensurePinToken(b, tmpPIN)
-	doVerifyPIN(ctx, b, userID, pinToken, nonce)
+	doVerifyPIN(ctx, b, userID, tmpPIN)
 
-	pinToken, nonce = ensurePinToken(b, tmpPIN)
-	newPIN, _ := ensurePinToken(b, default_pin)
-	doModifyPIN(ctx, b, userID, pinToken, nonce, newPIN)
+	doModifyPIN(ctx, b, userID, tmpPIN, default_pin)
 
 	doAssets(ctx, b, userID)
 	doAsset(ctx, b, userID, assetID)
@@ -70,14 +56,11 @@ func main() {
 		log.Panicln("should have at least one asset")
 	}
 
-	pinToken, nonce = ensurePinToken(b, default_pin)
-	doWithdrawFee(ctx, b, userID, assetID, publicKey, pinToken, nonce)
+	doWithdrawFee(ctx, b, userID, assetID, publicKey, default_pin)
 
-	pinToken, nonce = ensurePinToken(b, default_pin)
-	snapshot := doTransfer(ctx, b, dapp, userID, assetID, "0.1", pinToken, nonce)
+	snapshot := doTransfer(ctx, b, dapp, userID, assetID, "0.1", default_pin)
 
-	pinToken, nonce = ensurePinToken(b, default_pin)
-	doWithdraw(ctx, b, dapp, userID, assetID, publicKey, "0.1", pinToken, nonce)
+	doWithdraw(ctx, b, dapp, userID, assetID, publicKey, "0.1", default_pin)
 
 	time.Sleep(2 * time.Second)
 	doSnapshot(ctx, b, userID, "", snapshot.SnapshotID)

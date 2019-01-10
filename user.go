@@ -14,10 +14,18 @@ type User struct {
 
 // CreateUser create user
 func (broker *Broker) CreateUser(ctx context.Context, fullname, pin string) (*User, error) {
-	paras := map[string]interface{}{
-		"full_name": fullname,
-		"pin":       pin,
+	paras := map[string]interface{}{}
+	if len(fullname) > 0 {
+		paras["full_name"] = fullname
 	}
+	if len(pin) > 0 {
+		pinToken, _, err := broker.PINToken(pin)
+		if err != nil {
+			return nil, requestError(err)
+		}
+		paras["pin"] = pinToken
+	}
+
 	b, err := broker.Request(ctx, "", "POST", "/api/users", paras)
 	if err != nil {
 		return nil, requestError(err)

@@ -17,16 +17,20 @@ type WithdrawInput struct {
 }
 
 // Transfer transfer to account
-func (broker *Broker) Transfer(ctx context.Context, userID, pin, nonce string, input *mixin.TransferInput) (*Snapshot, error) {
+func (broker *Broker) Transfer(ctx context.Context, userID, pin string, input *mixin.TransferInput) (*Snapshot, error) {
+	pinToken, nonce, err := broker.PINToken(pin)
+	if err != nil {
+		return nil, requestError(err)
+	}
+
 	paras := map[string]interface{}{
 		"asset_id":    input.AssetID,
 		"opponent_id": input.OpponentID,
 		"trace_id":    input.TraceID,
 		"amount":      input.Amount,
 		"memo":        input.Memo,
-		"pin":         pin,
 	}
-	b, err := broker.RequestWithPIN(ctx, userID, pin, nonce, "POST", "/api/transfer", paras)
+	b, err := broker.RequestWithPIN(ctx, userID, pinToken, nonce, "POST", "/api/transfer", paras)
 	if err != nil {
 		return nil, requestError(err)
 	}
@@ -47,13 +51,17 @@ func (broker *Broker) Transfer(ctx context.Context, userID, pin, nonce string, i
 
 // Withdraw withdraw to address
 //	address_id, opponent_id, amount, traceID, memo
-func (broker *Broker) Withdraw(ctx context.Context, userID, pin, nonce string, input *WithdrawInput) (*Snapshot, error) {
+func (broker *Broker) Withdraw(ctx context.Context, userID, pin string, input *WithdrawInput) (*Snapshot, error) {
+	pinToken, nonce, err := broker.PINToken(pin)
+	if err != nil {
+		return nil, requestError(err)
+	}
+
 	paras := map[string]interface{}{
 		"asset_id": input.AssetID,
 		"trace_id": input.TraceID,
 		"amount":   input.Amount,
 		"memo":     input.Memo,
-		"pin":      pin,
 	}
 	if len(input.PublicKey) > 0 {
 		paras["public_key"] = input.PublicKey
@@ -63,7 +71,7 @@ func (broker *Broker) Withdraw(ctx context.Context, userID, pin, nonce string, i
 			paras["account_tag"] = input.AccountTag
 		}
 	}
-	b, err := broker.RequestWithPIN(ctx, userID, pin, nonce, "POST", "/api/withdraw", paras)
+	b, err := broker.RequestWithPIN(ctx, userID, pinToken, nonce, "POST", "/api/withdraw", paras)
 	if err != nil {
 		return nil, requestError(err)
 	}
@@ -83,10 +91,14 @@ func (broker *Broker) Withdraw(ctx context.Context, userID, pin, nonce string, i
 }
 
 // FetchWithdrawFee fetch withdraw fee
-func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin, nonce string, input *mixin.WithdrawAddress) (string, error) {
+func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin string, input *mixin.WithdrawAddress) (string, error) {
+	pinToken, nonce, err := broker.PINToken(pin)
+	if err != nil {
+		return "0", requestError(err)
+	}
+
 	paras := map[string]interface{}{
 		"asset_id": input.AssetID,
-		"pin":      pin,
 	}
 	if len(input.PublicKey) > 0 {
 		paras["public_key"] = input.PublicKey
@@ -96,7 +108,7 @@ func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin, nonce s
 			paras["account_tag"] = input.AccountTag
 		}
 	}
-	b, err := broker.RequestWithPIN(ctx, userID, pin, nonce, "POST", "/api/withdraw-fee", paras)
+	b, err := broker.RequestWithPIN(ctx, userID, pinToken, nonce, "POST", "/api/withdraw-fee", paras)
 	if err != nil {
 		return "0", requestError(err)
 	}

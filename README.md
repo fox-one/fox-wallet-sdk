@@ -11,6 +11,7 @@ sdk.NewBroker(apiBase, brokerID, brokerSecret, brokerPINSecret)
 ## 生成pin token
 
 ```go
+// pin 必须为6位数字
 pinToken, _, err := b.PINToken(pin)
 if err != nil {
     log.Panicln(err)
@@ -20,14 +21,14 @@ if err != nil {
 ## 通过broker访问Fox Wallet
 
 ```go
-// 创建用户，name, pinToken 可选
-b.CreateUser(ctx, name, pinToken)
+// 创建用户，name, pin 可选。
+b.CreateUser(ctx, name, pin)
 
 // 修改PIN
-b.ModifyPIN(ctx, userID, pinToken, nonce, newPINToken)
+b.ModifyPIN(ctx, userID, pin, newPIN)
 
 // 验证PIN
-b.VerifyPIN(ctx, userID, pinToken, nonce)
+b.VerifyPIN(ctx, userID, pin)
 
 // 用户的所有持仓，地址信息
 b.FetchAssets(ctx, userID)
@@ -36,7 +37,7 @@ b.FetchAssets(ctx, userID)
 b.FetchAsset(ctx, userID, assetID)
 
 // 转账
-b.Transfer(ctx, userID, pinToken, nonce, &mixin.TransferInput{
+b.Transfer(ctx, userID, pin, &mixin.TransferInput{
     AssetID:    assetID,
     Amount:     amount,
     OpponentID: receiverID,
@@ -45,7 +46,7 @@ b.Transfer(ctx, userID, pinToken, nonce, &mixin.TransferInput{
 })
 
 // 提现
-b.Withdraw(ctx, userID, pinToken, nonce, &&sdk.WithdrawInput{
+b.Withdraw(ctx, userID, pin, &&sdk.WithdrawInput{
     WithdrawAddress: mixin.WithdrawAddress{
         AssetID:     assetID,
         PublicKey:   publicKey,
@@ -59,7 +60,7 @@ b.Withdraw(ctx, userID, pinToken, nonce, &&sdk.WithdrawInput{
 })
 
 // 提现手续费查询
-b.FetchWithdrawFee(ctx, userID, pinToken, nonce, &mixin.WithdrawAddress{
+b.FetchWithdrawFee(ctx, userID, pin, &mixin.WithdrawAddress{
     AssetID:     assetID,
     PublicKey:   publicKey,
     AccountName: "",

@@ -26,7 +26,6 @@ func NewBroker(apiBase, brokerID, secret, pinSecret string) *Broker {
 	b := &Broker{
 		brokerID: brokerID,
 		apiBase:  apiBase,
-		// secret:   secret,
 	}
 
 	s, err := base64.StdEncoding.DecodeString(secret)

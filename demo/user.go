@@ -8,7 +8,7 @@ import (
 )
 
 func doCreateUser(ctx context.Context, b *sdk.Broker, pin string) *sdk.User {
-	u, e := b.CreateUser(ctx, "Charlie", pin)
+	u, e := b.CreateUser(ctx, "", pin)
 	if e != nil {
 		log.Panicln(e)
 	}
@@ -17,16 +17,16 @@ func doCreateUser(ctx context.Context, b *sdk.Broker, pin string) *sdk.User {
 	return u
 }
 
-func doModifyPIN(ctx context.Context, b *sdk.Broker, userID string, pin, nonce, newPIN string) {
-	err := b.ModifyPIN(ctx, userID, pin, nonce, newPIN)
+func doModifyPIN(ctx context.Context, b *sdk.Broker, userID string, pin, newPIN string) {
+	err := b.ModifyPIN(ctx, userID, pin, newPIN)
 	if err != nil {
 		log.Panicln(err)
 	}
 	log.Println("modify PIN succ")
 }
 
-func doVerifyPIN(ctx context.Context, b *sdk.Broker, userID string, pin, nonce string) {
-	err := b.VerifyPIN(ctx, userID, pin, nonce)
+func doVerifyPIN(ctx context.Context, b *sdk.Broker, userID string, pin string) {
+	err := b.VerifyPIN(ctx, userID, pin)
 	if err != nil {
 		log.Panicln(err)
 	}

@@ -9,7 +9,7 @@ import (
 	"github.com/satori/go.uuid"
 )
 
-func doTransfer(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, assetID, amount, pin, nonce string) *sdk.Snapshot {
+func doTransfer(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, assetID, amount, pin string) *sdk.Snapshot {
 	input := &mixin.TransferInput{
 		AssetID:    assetID,
 		Amount:     amount,
@@ -28,7 +28,7 @@ func doTransfer(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, as
 	input.Memo = "pong"
 	input.TraceID = uuid.Must(uuid.NewV4()).String()
 
-	snapshot, err := b.Transfer(ctx, userID, pin, nonce, input)
+	snapshot, err := b.Transfer(ctx, userID, pin, input)
 	if err != nil {
 		log.Panicln(err)
 	}
@@ -37,7 +37,7 @@ func doTransfer(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, as
 	return snapshot
 }
 
-func doWithdraw(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, assetID, publicKey, amount, pin, nonce string) *sdk.Snapshot {
+func doWithdraw(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, assetID, publicKey, amount, pin string) *sdk.Snapshot {
 	input := &mixin.TransferInput{
 		AssetID:    assetID,
 		Amount:     amount,
@@ -63,7 +63,7 @@ func doWithdraw(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, as
 		Memo:    "pong",
 	}
 
-	snapshot, err := b.Withdraw(ctx, userID, pin, nonce, withdrawInput)
+	snapshot, err := b.Withdraw(ctx, userID, pin, withdrawInput)
 	if err != nil {
 		log.Panicln(err)
 	}
@@ -72,12 +72,12 @@ func doWithdraw(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, as
 	return snapshot
 }
 
-func doWithdrawFee(ctx context.Context, b *sdk.Broker, userID, assetID, publicKey, pin, nonce string) string {
+func doWithdrawFee(ctx context.Context, b *sdk.Broker, userID, assetID, publicKey, pin string) string {
 	input := &mixin.WithdrawAddress{
 		AssetID:   assetID,
 		PublicKey: publicKey,
 	}
-	fee, err := b.FetchWithdrawFee(ctx, userID, pin, nonce, input)
+	fee, err := b.FetchWithdrawFee(ctx, userID, pin, input)
 	if err != nil {
 		log.Panicln(err)
 	}
