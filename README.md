@@ -5,23 +5,7 @@ demo 中包含sdk的初始化以及各个接口的使用范例。
 ## 初始化Broker
 
 ```go
-func loadBroker(apiBase, brokerID, brokerSecret, brokerPINSecret string) *sdk.Broker {
-    var secret []byte
-    var pinSecret []byte
-    if s, err := base64.StdEncoding.DecodeString(brokerSecret); err != nil {
-        log.Panicln(err)
-    } else {
-        secret = s
-    }
-
-    if s, err := base64.StdEncoding.DecodeString(brokerPINSecret); err != nil {
-        log.Panicln(err)
-    } else {
-        pinSecret = s
-    }
-
-    b := sdk.NewBroker(apiBase, brokerID, secret, pinSecret)
-}
+sdk.NewBroker(apiBase, brokerID, brokerSecret, brokerPINSecret)
 ```
 
 ## 生成pin token
