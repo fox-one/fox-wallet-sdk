@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"encoding/json"
+	"time"
 )
 
 // Asset asset
@@ -39,9 +40,18 @@ type UserAsset struct {
 	Address           *UserAddress `json:"address,omitempty"`
 }
 
-// FetchAssets fetch user assets
+// FetchAssets fetch assets
 func (broker *Broker) FetchAssets(ctx context.Context, userID string) ([]*UserAsset, error) {
-	b, err := broker.Request(ctx, userID, "GET", "/api/assets", nil)
+	token, err := broker.SignToken(userID, time.Now().Unix()+60)
+	if err != nil {
+		return nil, requestError(err)
+	}
+	return broker.BrokerHandler.FetchAssets(ctx, token)
+}
+
+// FetchAssets fetch user assets
+func (broker *BrokerHandler) FetchAssets(ctx context.Context, token string) ([]*UserAsset, error) {
+	b, err := broker.Request(ctx, "GET", "/api/assets", nil, token)
 	if err != nil {
 		return nil, requestError(err)
 	}
@@ -60,9 +70,18 @@ func (broker *Broker) FetchAssets(ctx context.Context, userID string) ([]*UserAs
 	return nil, &data.Error
 }
 
-// FetchAsset fetch user asset
+// FetchAsset fetch asset
 func (broker *Broker) FetchAsset(ctx context.Context, userID, assetID string) (*UserAsset, error) {
-	b, err := broker.Request(ctx, userID, "GET", "/api/asset/"+assetID, nil)
+	token, err := broker.SignToken(userID, time.Now().Unix()+60)
+	if err != nil {
+		return nil, requestError(err)
+	}
+	return broker.BrokerHandler.FetchAsset(ctx, assetID, token)
+}
+
+// FetchAsset fetch user asset
+func (broker *BrokerHandler) FetchAsset(ctx context.Context, assetID, token string) (*UserAsset, error) {
+	b, err := broker.Request(ctx, "GET", "/api/asset/"+assetID, nil, token)
 	if err != nil {
 		return nil, requestError(err)
 	}

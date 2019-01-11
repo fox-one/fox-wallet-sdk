@@ -5,7 +5,10 @@ demo 中包含sdk的初始化以及各个接口的使用范例。
 ## 初始化Broker
 
 ```go
+// 若需要自行创建钱包，管理钱包，则使用broker id, secret, pin secret初始化sdk.Broker
 sdk.NewBroker(apiBase, brokerID, brokerSecret, brokerPINSecret)
+// 若只接收会员层下发的token，则使用api base初始化BrokerHandler
+sdk.NewBrokerHandler(apiBase)
 ```
 
 ## 生成pin token
@@ -16,6 +19,15 @@ pinToken, _, err := b.PINToken(pin)
 if err != nil {
     log.Panicln(err)
 }
+```
+
+## 生成jwt token
+
+```go
+// SignToken 生成jwt token
+func (b *Broker) SignToken(userID string, expire int64, nonceRepeat ...int) (string, error)
+// SignTokenWithPIN 生成带有pin信息的jwt token
+func (b *Broker) SignTokenWithPIN(userID string, expire int64, pin string, nonceRepeats ...int) (string, error)
 ```
 
 ## 通过broker访问Fox Wallet

@@ -3,11 +3,12 @@ package sdk
 import (
 	"context"
 	"encoding/json"
+	"time"
 )
 
 // ModifyPIN modify pin
 func (broker *Broker) ModifyPIN(ctx context.Context, userID, pin, newPIN string) error {
-	pinToken, nonce, err := broker.PINToken(pin)
+	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
 	if err != nil {
 		return requestError(err)
 	}
@@ -17,10 +18,15 @@ func (broker *Broker) ModifyPIN(ctx context.Context, userID, pin, newPIN string)
 		return requestError(err)
 	}
 
+	return broker.BrokerHandler.ModifyPIN(ctx, newPINToken, token)
+}
+
+// ModifyPIN modify pin
+func (broker *BrokerHandler) ModifyPIN(ctx context.Context, newPINToken, token string) error {
 	paras := map[string]interface{}{
 		"pin": newPINToken,
 	}
-	b, err := broker.RequestWithPIN(ctx, userID, pinToken, nonce, "PUT", "/api/pin", paras)
+	b, err := broker.Request(ctx, "PUT", "/api/pin", paras, token)
 	if err != nil {
 		return requestError(err)
 	}
@@ -40,12 +46,17 @@ func (broker *Broker) ModifyPIN(ctx context.Context, userID, pin, newPIN string)
 
 // VerifyPIN verify pin
 func (broker *Broker) VerifyPIN(ctx context.Context, userID, pin string) error {
-	pinToken, nonce, err := broker.PINToken(pin)
+	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
 	if err != nil {
 		return requestError(err)
 	}
 
-	b, err := broker.RequestWithPIN(ctx, userID, pinToken, nonce, "POST", "/api/pin/verify", nil)
+	return broker.BrokerHandler.VerifyPIN(ctx, token)
+}
+
+// VerifyPIN verify pin
+func (broker *BrokerHandler) VerifyPIN(ctx context.Context, token string) error {
+	b, err := broker.Request(ctx, "POST", "/api/pin/verify", nil, token)
 	if err != nil {
 		return requestError(err)
 	}

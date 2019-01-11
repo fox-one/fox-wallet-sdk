@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/fox-one/mixin-sdk/mixin"
 )
@@ -18,11 +19,16 @@ type WithdrawInput struct {
 
 // Transfer transfer to account
 func (broker *Broker) Transfer(ctx context.Context, userID, pin string, input *mixin.TransferInput) (*Snapshot, error) {
-	pinToken, nonce, err := broker.PINToken(pin)
+	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
 	if err != nil {
 		return nil, requestError(err)
 	}
 
+	return broker.BrokerHandler.Transfer(ctx, input, token)
+}
+
+// Transfer transfer to account
+func (broker *BrokerHandler) Transfer(ctx context.Context, input *mixin.TransferInput, token string) (*Snapshot, error) {
 	paras := map[string]interface{}{
 		"asset_id":    input.AssetID,
 		"opponent_id": input.OpponentID,
@@ -30,7 +36,7 @@ func (broker *Broker) Transfer(ctx context.Context, userID, pin string, input *m
 		"amount":      input.Amount,
 		"memo":        input.Memo,
 	}
-	b, err := broker.RequestWithPIN(ctx, userID, pinToken, nonce, "POST", "/api/transfer", paras)
+	b, err := broker.Request(ctx, "POST", "/api/transfer", paras, token)
 	if err != nil {
 		return nil, requestError(err)
 	}
@@ -52,11 +58,17 @@ func (broker *Broker) Transfer(ctx context.Context, userID, pin string, input *m
 // Withdraw withdraw to address
 //	address_id, opponent_id, amount, traceID, memo
 func (broker *Broker) Withdraw(ctx context.Context, userID, pin string, input *WithdrawInput) (*Snapshot, error) {
-	pinToken, nonce, err := broker.PINToken(pin)
+	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
 	if err != nil {
 		return nil, requestError(err)
 	}
 
+	return broker.BrokerHandler.Withdraw(ctx, input, token)
+}
+
+// Withdraw withdraw to address
+//	address_id, opponent_id, amount, traceID, memo
+func (broker *BrokerHandler) Withdraw(ctx context.Context, input *WithdrawInput, token string) (*Snapshot, error) {
 	paras := map[string]interface{}{
 		"asset_id": input.AssetID,
 		"trace_id": input.TraceID,
@@ -71,7 +83,7 @@ func (broker *Broker) Withdraw(ctx context.Context, userID, pin string, input *W
 			paras["account_tag"] = input.AccountTag
 		}
 	}
-	b, err := broker.RequestWithPIN(ctx, userID, pinToken, nonce, "POST", "/api/withdraw", paras)
+	b, err := broker.Request(ctx, "POST", "/api/withdraw", paras, token)
 	if err != nil {
 		return nil, requestError(err)
 	}
@@ -92,11 +104,16 @@ func (broker *Broker) Withdraw(ctx context.Context, userID, pin string, input *W
 
 // FetchWithdrawFee fetch withdraw fee
 func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin string, input *mixin.WithdrawAddress) (string, error) {
-	pinToken, nonce, err := broker.PINToken(pin)
+	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
 	if err != nil {
 		return "0", requestError(err)
 	}
 
+	return broker.BrokerHandler.FetchWithdrawFee(ctx, input, token)
+}
+
+// FetchWithdrawFee fetch withdraw fee
+func (broker *BrokerHandler) FetchWithdrawFee(ctx context.Context, input *mixin.WithdrawAddress, token string) (string, error) {
 	paras := map[string]interface{}{
 		"asset_id": input.AssetID,
 	}
@@ -108,7 +125,7 @@ func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin string, 
 			paras["account_tag"] = input.AccountTag
 		}
 	}
-	b, err := broker.RequestWithPIN(ctx, userID, pinToken, nonce, "POST", "/api/withdraw-fee", paras)
+	b, err := broker.Request(ctx, "POST", "/api/withdraw-fee", paras, token)
 	if err != nil {
 		return "0", requestError(err)
 	}

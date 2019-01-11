@@ -5,41 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/fox-one/mixin-sdk/utils"
 )
 
-// GenerateToken generate jwt token
-func (broker *Broker) GenerateToken(userID, pinToken, nonce string, expire int64) (string, error) {
-	jwtMap := map[string]interface{}{
-		"i": broker.brokerID,
-	}
-	if len(userID) > 0 {
-		jwtMap["u"] = userID
-	}
-
-	if len(pinToken) > 0 {
-		jwtMap["pt"] = pinToken
-	}
-
-	token, err := broker.Sign(jwtMap, time.Now().Unix()+expire, nonce)
-	if err != nil {
-		return "", err
-	}
-
-	return token, nil
-}
-
-// Request sign and request
+// Request send request
 //  jwt token, {"i":"broker-id","u":"user-id","n":"nonce","e":123,"nr":2,"pt":"pin token"}
-func (broker *Broker) Request(ctx context.Context, userID string, method, uri string, params map[string]interface{}, headers ...string) ([]byte, error) {
-	return broker.RequestWithPIN(ctx, userID, "", "", method, uri, params, headers...)
-}
-
-// RequestWithPIN sign and request
-//  jwt token, {"i":"broker-id","u":"user-id","n":"nonce","e":123,"nr":2,"pt":"pin token"}
-func (broker *Broker) RequestWithPIN(ctx context.Context, userID, pinToken, nonce string, method, uri string, params map[string]interface{}, headers ...string) ([]byte, error) {
+func (broker *BrokerHandler) Request(ctx context.Context, method, uri string, params map[string]interface{}, token string, headers ...string) ([]byte, error) {
 	body := []byte{}
 	switch method {
 	case "GET", "DELETE":
@@ -57,13 +29,7 @@ func (broker *Broker) RequestWithPIN(ctx context.Context, userID, pinToken, nonc
 		body = b
 	}
 
-	token, err := broker.GenerateToken(userID, pinToken, nonce, 60)
-	if err != nil {
-		return nil, err
-	}
-
-	headers = append(headers, "Content-Type", "application/json",
-		"Authorization", "Bearer "+token)
+	headers = append(headers, "Content-Type", "application/json", "Authorization", "Bearer "+token)
 
 	url := broker.apiBase + uri
 	req, err := utils.NewRequest(url, method, string(body), headers...)

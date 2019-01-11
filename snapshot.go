@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"encoding/json"
+	"time"
 )
 
 // Snapshot snapshot
@@ -29,13 +30,23 @@ type Snapshot struct {
 
 // FetchSnapshot fetch user snapshot
 func (broker *Broker) FetchSnapshot(ctx context.Context, userID, traceID, snapshotID string) (*Snapshot, error) {
+	token, err := broker.SignToken(userID, time.Now().Unix()+60)
+	if err != nil {
+		return nil, requestError(err)
+	}
+
+	return broker.BrokerHandler.FetchSnapshot(ctx, traceID, snapshotID, token)
+}
+
+// FetchSnapshot fetch a snapshot
+func (broker *BrokerHandler) FetchSnapshot(ctx context.Context, traceID, snapshotID, token string) (*Snapshot, error) {
 	paras := map[string]interface{}{}
 	if len(traceID) > 0 {
 		paras["trace_id"] = traceID
 	} else {
 		paras["snapshot_id"] = snapshotID
 	}
-	b, err := broker.Request(ctx, userID, "GET", "/api/snapshot", paras)
+	b, err := broker.Request(ctx, "GET", "/api/snapshot", paras, token)
 	if err != nil {
 		return nil, requestError(err)
 	}
@@ -55,7 +66,17 @@ func (broker *Broker) FetchSnapshot(ctx context.Context, userID, traceID, snapsh
 }
 
 // FetchSnapshots fetch snapshots
-func (broker *Broker) FetchSnapshots(ctx context.Context, userID, assetID string, offset string, order string, limit int) ([]*Snapshot, string, error) {
+func (broker *Broker) FetchSnapshots(ctx context.Context, userID, assetID, offset, order string, limit int) ([]*Snapshot, string, error) {
+	token, err := broker.SignToken(userID, time.Now().Unix()+60)
+	if err != nil {
+		return nil, offset, requestError(err)
+	}
+
+	return broker.BrokerHandler.FetchSnapshots(ctx, assetID, offset, order, limit, token)
+}
+
+// FetchSnapshots fetch snapshots
+func (broker *BrokerHandler) FetchSnapshots(ctx context.Context, assetID, offset, order string, limit int, token string) ([]*Snapshot, string, error) {
 	paras := map[string]interface{}{
 		"order":    order,
 		"asset_id": assetID,
@@ -66,7 +87,7 @@ func (broker *Broker) FetchSnapshots(ctx context.Context, userID, assetID string
 		paras["limit"] = limit
 	}
 
-	b, err := broker.Request(ctx, userID, "POST", "/api/snapshots", paras)
+	b, err := broker.Request(ctx, "POST", "/api/snapshots", paras, token)
 	if err != nil {
 		return nil, offset, requestError(err)
 	}
