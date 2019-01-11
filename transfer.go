@@ -4,13 +4,32 @@ import (
 	"context"
 	"encoding/json"
 	"time"
-
-	"github.com/fox-one/mixin-sdk/mixin"
 )
+
+// TransferInput input for transfer/verify payment request
+type TransferInput struct {
+	AddressID  string `json:"address_id,omitempty"`
+	AssetID    string `json:"asset_id,omitempty"`
+	OpponentID string `json:"opponent_id,omitempty"`
+	Amount     string `json:"amount,omitempty"`
+	TraceID    string `json:"trace_id,omitempty"`
+	Memo       string `json:"memo,omitempty"`
+}
+
+// WithdrawAddress withdraw address
+type WithdrawAddress struct {
+	AssetID string `json:"asset_id"`
+
+	PublicKey string `json:"public_key,omitempty"`
+	Label     string `json:"label,omitempty"`
+
+	AccountName string `json:"account_name,omitempty"`
+	AccountTag  string `json:"account_tag,omitempty"`
+}
 
 // WithdrawInput withdraw input
 type WithdrawInput struct {
-	mixin.WithdrawAddress
+	WithdrawAddress
 
 	Amount  string
 	TraceID string
@@ -18,7 +37,7 @@ type WithdrawInput struct {
 }
 
 // Transfer transfer to account
-func (broker *Broker) Transfer(ctx context.Context, userID, pin string, input *mixin.TransferInput) (*Snapshot, error) {
+func (broker *Broker) Transfer(ctx context.Context, userID, pin string, input *TransferInput) (*Snapshot, error) {
 	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
 	if err != nil {
 		return nil, requestError(err)
@@ -28,7 +47,7 @@ func (broker *Broker) Transfer(ctx context.Context, userID, pin string, input *m
 }
 
 // Transfer transfer to account
-func (broker *BrokerHandler) Transfer(ctx context.Context, input *mixin.TransferInput, token string) (*Snapshot, error) {
+func (broker *BrokerHandler) Transfer(ctx context.Context, input *TransferInput, token string) (*Snapshot, error) {
 	paras := map[string]interface{}{
 		"asset_id":    input.AssetID,
 		"opponent_id": input.OpponentID,
@@ -103,7 +122,7 @@ func (broker *BrokerHandler) Withdraw(ctx context.Context, input *WithdrawInput,
 }
 
 // FetchWithdrawFee fetch withdraw fee
-func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin string, input *mixin.WithdrawAddress) (string, error) {
+func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin string, input *WithdrawAddress) (string, error) {
 	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
 	if err != nil {
 		return "0", requestError(err)
@@ -113,7 +132,7 @@ func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin string, 
 }
 
 // FetchWithdrawFee fetch withdraw fee
-func (broker *BrokerHandler) FetchWithdrawFee(ctx context.Context, input *mixin.WithdrawAddress, token string) (string, error) {
+func (broker *BrokerHandler) FetchWithdrawFee(ctx context.Context, input *WithdrawAddress, token string) (string, error) {
 	paras := map[string]interface{}{
 		"asset_id": input.AssetID,
 	}

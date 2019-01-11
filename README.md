@@ -49,7 +49,7 @@ b.FetchAssets(ctx, userID)
 b.FetchAsset(ctx, userID, assetID)
 
 // 转账
-b.Transfer(ctx, userID, pin, &mixin.TransferInput{
+b.Transfer(ctx, userID, pin, &sdk.TransferInput{
     AssetID:    assetID,
     Amount:     amount,
     OpponentID: receiverID,
@@ -58,8 +58,10 @@ b.Transfer(ctx, userID, pin, &mixin.TransferInput{
 })
 
 // 提现
-b.Withdraw(ctx, userID, pin, &&sdk.WithdrawInput{
-    WithdrawAddress: mixin.WithdrawAddress{
+//  对于EOS及其链上的币种，public key留空,只需填入用户的account name, account tag; memo不可填。
+//  对于其他币种，只需填入public key。留空account name, account tag.
+b.Withdraw(ctx, userID, pin, &sdk.WithdrawInput{
+    WithdrawAddress: sdk.WithdrawAddress{
         AssetID:     assetID,
         PublicKey:   publicKey,
         AccountName: "",
@@ -72,7 +74,7 @@ b.Withdraw(ctx, userID, pin, &&sdk.WithdrawInput{
 })
 
 // 提现手续费查询
-b.FetchWithdrawFee(ctx, userID, pin, &mixin.WithdrawAddress{
+b.FetchWithdrawFee(ctx, userID, pin, &sdk.WithdrawAddress{
     AssetID:     assetID,
     PublicKey:   publicKey,
     AccountName: "",

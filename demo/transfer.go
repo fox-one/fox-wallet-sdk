@@ -24,11 +24,15 @@ func doTransfer(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, as
 
 	log.Println("ping done")
 
-	input.OpponentID = dapp.UserID
-	input.Memo = "pong"
-	input.TraceID = uuid.Must(uuid.NewV4()).String()
+	tInput := &sdk.TransferInput{
+		AssetID:    assetID,
+		Amount:     amount,
+		OpponentID: dapp.UserID,
+		TraceID:    uuid.Must(uuid.NewV4()).String(),
+		Memo:       "pong",
+	}
 
-	snapshot, err := b.Transfer(ctx, userID, pin, input)
+	snapshot, err := b.Transfer(ctx, userID, pin, tInput)
 	if err != nil {
 		log.Panicln(err)
 	}
@@ -53,7 +57,7 @@ func doWithdraw(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, as
 	log.Println("ping done")
 
 	withdrawInput := &sdk.WithdrawInput{
-		WithdrawAddress: mixin.WithdrawAddress{
+		WithdrawAddress: sdk.WithdrawAddress{
 			AssetID:   assetID,
 			PublicKey: publicKey,
 		},
@@ -73,7 +77,7 @@ func doWithdraw(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, as
 }
 
 func doWithdrawFee(ctx context.Context, b *sdk.Broker, userID, assetID, publicKey, pin string) string {
-	input := &mixin.WithdrawAddress{
+	input := &sdk.WithdrawAddress{
 		AssetID:   assetID,
 		PublicKey: publicKey,
 	}
