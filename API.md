@@ -5,29 +5,50 @@
 - Fox生成broker id, broker secret, broker pin secret
 - 使用jwt生成token，SigningMethodHS256算法签名
 - jwt map: {"i":"broker-id","u":"user-id","n":"nonce","e":123,"nr":2,"pt":"pin token"}
+- u为可选项，当查询，操作具体钱包时，指明要操作的钱包地址。创建钱包时可以不传。
 - e为expire, unix timestamp。
 - n为nonce。nonce可以每次随机一个uuid。
-- nr为nonce repeat，默认为1.代表一个nonce在10分钟内可以使用的次数。
+- nr为nonce repeat，可选项，不传则默认为1.代表一个nonce在10分钟内可以使用的次数。
 
 ```go
-// 签名算法demo
-func Sign(brokerSecret string, method, uri string, body []byte) (string, error) {
-    secret, err := base64.StdEncoding.DecodeString(brokerSecret)
-    if err != nil {
-        return "", err
+func (b *Broker) SignTokenWithPIN(userID string, expire int64, pin string, nonceRepeats ...int) (string, error) {
+    params := map[string]interface{}{
+        "i": b.brokerID,
+        "e": expire,
+        "n": uuid.Must(uuid.NewV4()).String(),
     }
 
-    plain := append([]byte(method+uri), body...)
-    h := hmac.New(sha256.New, secret)
-    h.Write(plain)
-    return base64.StdEncoding.EncodeToString(h.Sum(nil)), nil
+    if len(userID) > 0 {
+        params["u"] = userID
+    }
+
+    if len(pin) > 0 {
+        pinToken, nonce, err := b.PINToken(pin)
+        if err != nil {
+            return "", err
+        }
+        params["n"] = nonce
+        params["pt"] = pinToken
+    }
+
+    if len(nonceRepeats) > 0 && nonceRepeats[0] > 0 {
+        params["nr"] = nonceRepeats[0]
+    }
+
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims(params))
+    return token.SignedString(b.secret)
 }
 ```
 
 ## PIN 加密
 
+- 使用PKCS7 padding， AES CBC进行加密
 - 以broker pin secret为aes key, broker id为aes iv, 对("data:"+pin+";"+nonce)进行aes加密
 - nonce需要是请求中nonce参数的前10位
+
+```go
+AESCBC([]byte(encryptPrefix+pin+";"+nonce), pinSecret, []byte(brokerID))
+```
 
 ## Create User
 
