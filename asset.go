@@ -44,7 +44,7 @@ type UserAsset struct {
 func (broker *Broker) FetchAssets(ctx context.Context, userID string) ([]*UserAsset, error) {
 	token, err := broker.SignToken(userID, time.Now().Unix()+60)
 	if err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 	return broker.BrokerHandler.FetchAssets(ctx, token)
 }
@@ -53,7 +53,7 @@ func (broker *Broker) FetchAssets(ctx context.Context, userID string) ([]*UserAs
 func (broker *BrokerHandler) FetchAssets(ctx context.Context, token string) ([]*UserAsset, error) {
 	b, err := broker.Request(ctx, "GET", "/api/assets", nil, token)
 	if err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	var data struct {
@@ -61,20 +61,20 @@ func (broker *BrokerHandler) FetchAssets(ctx context.Context, token string) ([]*
 		Assets []*UserAsset `json:"data"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	if data.Code == 0 {
 		return data.Assets, nil
 	}
-	return nil, &data.Error
+	return nil, errorWithWalletError(&data.Error)
 }
 
 // FetchAsset fetch asset
 func (broker *Broker) FetchAsset(ctx context.Context, userID, assetID string) (*UserAsset, error) {
 	token, err := broker.SignToken(userID, time.Now().Unix()+60)
 	if err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 	return broker.BrokerHandler.FetchAsset(ctx, assetID, token)
 }
@@ -83,7 +83,7 @@ func (broker *Broker) FetchAsset(ctx context.Context, userID, assetID string) (*
 func (broker *BrokerHandler) FetchAsset(ctx context.Context, assetID, token string) (*UserAsset, error) {
 	b, err := broker.Request(ctx, "GET", "/api/asset/"+assetID, nil, token)
 	if err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	var data struct {
@@ -91,11 +91,11 @@ func (broker *BrokerHandler) FetchAsset(ctx context.Context, assetID, token stri
 		Asset *UserAsset `json:"data"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	if data.Code == 0 {
 		return data.Asset, nil
 	}
-	return nil, &data.Error
+	return nil, errorWithWalletError(&data.Error)
 }

@@ -30,6 +30,43 @@ func (b *Broker) SignToken(userID string, expire int64, nonceRepeat ...int) (str
 func (b *Broker) SignTokenWithPIN(userID string, expire int64, pin string, nonceRepeats ...int) (string, error)
 ```
 
+## 错误码
+
+```go
+var (
+    // ErrInternalServerError code 2, internal server error
+    ErrInternalServerError = errors.New("internal server error")
+    // ErrInvalidBroker code 1500, invalid broker
+    ErrInvalidBroker = errors.New("invalid broker")
+    // ErrReplayRequest code 1501, replay request
+    ErrReplayRequest = errors.New("replay request")
+    // ErrInvalidUser code 1502, invalid user
+    ErrInvalidUser = errors.New("invalid user")
+    // ErrForbidden code 1503, forbiddenn
+    ErrForbidden = errors.New("forbidden")
+    // ErrInvalidPINToken code 1504, invalid pin token
+    ErrInvalidPINToken = errors.New("invalid pin token")
+    // ErrIncorrectPIN code 1505, incorrect pin
+    ErrIncorrectPIN = errors.New("incorrect pin")
+    // ErrIncorrectPINNonce code 1506, invalid pin nonce
+    ErrIncorrectPINNonce = errors.New("invalid pin nonce")
+    // ErrNotFound code 1507, not found
+    ErrNotFound = errors.New("not found")
+    // ErrInvalidRequest code 1508, invalid request
+    ErrInvalidRequest = errors.New("invalid request")
+    // ErrTooManyRequests code 1509, too many requests
+    ErrTooManyRequests = errors.New("too many requests")
+    // ErrInsufficientBalance code 1510, insufficient balance
+    ErrInsufficientBalance = errors.New("insufficient balance")
+    // ErrInsufficientFee code 1511, insufficient fee
+    ErrInsufficientFee = errors.New("insufficient fee")
+    // ErrAmountTooSmall code 1512, amount too small
+    ErrAmountTooSmall = errors.New("amount too small")
+    // ErrInvalidTrace code 1513, invalid trace id
+    ErrInvalidTrace = errors.New("invalid trace id")
+)
+```
+
 ## 通过broker访问Fox Wallet
 
 ```go

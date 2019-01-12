@@ -32,7 +32,7 @@ type Snapshot struct {
 func (broker *Broker) FetchSnapshot(ctx context.Context, userID, traceID, snapshotID string) (*Snapshot, error) {
 	token, err := broker.SignToken(userID, time.Now().Unix()+60)
 	if err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	return broker.BrokerHandler.FetchSnapshot(ctx, traceID, snapshotID, token)
@@ -48,7 +48,7 @@ func (broker *BrokerHandler) FetchSnapshot(ctx context.Context, traceID, snapsho
 	}
 	b, err := broker.Request(ctx, "GET", "/api/snapshot", paras, token)
 	if err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	var data struct {
@@ -56,20 +56,20 @@ func (broker *BrokerHandler) FetchSnapshot(ctx context.Context, traceID, snapsho
 		Snapshot *Snapshot `json:"data"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	if data.Code == 0 {
 		return data.Snapshot, nil
 	}
-	return nil, &data.Error
+	return nil, errorWithWalletError(&data.Error)
 }
 
 // FetchSnapshots fetch snapshots
 func (broker *Broker) FetchSnapshots(ctx context.Context, userID, assetID, offset, order string, limit int) ([]*Snapshot, string, error) {
 	token, err := broker.SignToken(userID, time.Now().Unix()+60)
 	if err != nil {
-		return nil, offset, requestError(err)
+		return nil, offset, err
 	}
 
 	return broker.BrokerHandler.FetchSnapshots(ctx, assetID, offset, order, limit, token)
@@ -89,7 +89,7 @@ func (broker *BrokerHandler) FetchSnapshots(ctx context.Context, assetID, offset
 
 	b, err := broker.Request(ctx, "POST", "/api/snapshots", paras, token)
 	if err != nil {
-		return nil, offset, requestError(err)
+		return nil, offset, err
 	}
 
 	var data struct {
@@ -98,11 +98,11 @@ func (broker *BrokerHandler) FetchSnapshots(ctx context.Context, assetID, offset
 		NextOffset string      `json:"next_offset"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, offset, requestError(err)
+		return nil, offset, err
 	}
 
 	if data.Code == 0 {
 		return data.Snapshots, data.NextOffset, nil
 	}
-	return nil, offset, &data.Error
+	return nil, offset, errorWithWalletError(&data.Error)
 }

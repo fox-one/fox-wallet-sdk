@@ -22,19 +22,19 @@ func (broker *Broker) CreateUser(ctx context.Context, fullname, pin string) (*Us
 	if len(pin) > 0 {
 		pinToken, _, err := broker.PINToken(pin)
 		if err != nil {
-			return nil, requestError(err)
+			return nil, err
 		}
 		paras["pin"] = pinToken
 	}
 
 	token, err := broker.SignToken("", time.Now().Unix()+60, 1)
 	if err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	b, err := broker.Request(ctx, "POST", "/api/users", paras, token)
 	if err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	var data struct {
@@ -42,11 +42,11 @@ func (broker *Broker) CreateUser(ctx context.Context, fullname, pin string) (*Us
 		User *User `json:"data"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	if data.Code == 0 {
 		return data.User, nil
 	}
-	return nil, &data.Error
+	return nil, errorWithWalletError(&data.Error)
 }

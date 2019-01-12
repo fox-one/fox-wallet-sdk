@@ -40,7 +40,7 @@ type WithdrawInput struct {
 func (broker *Broker) Transfer(ctx context.Context, userID, pin string, input *TransferInput) (*Snapshot, error) {
 	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
 	if err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	return broker.BrokerHandler.Transfer(ctx, input, token)
@@ -57,7 +57,7 @@ func (broker *BrokerHandler) Transfer(ctx context.Context, input *TransferInput,
 	}
 	b, err := broker.Request(ctx, "POST", "/api/transfer", paras, token)
 	if err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	var data struct {
@@ -65,13 +65,13 @@ func (broker *BrokerHandler) Transfer(ctx context.Context, input *TransferInput,
 		Snapshot *Snapshot `json:"data,omitempty"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	if data.Code == 0 {
 		return data.Snapshot, nil
 	}
-	return nil, &data.Error
+	return nil, errorWithWalletError(&data.Error)
 }
 
 // Withdraw withdraw to address
@@ -79,7 +79,7 @@ func (broker *BrokerHandler) Transfer(ctx context.Context, input *TransferInput,
 func (broker *Broker) Withdraw(ctx context.Context, userID, pin string, input *WithdrawInput) (*Snapshot, error) {
 	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
 	if err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	return broker.BrokerHandler.Withdraw(ctx, input, token)
@@ -104,7 +104,7 @@ func (broker *BrokerHandler) Withdraw(ctx context.Context, input *WithdrawInput,
 	}
 	b, err := broker.Request(ctx, "POST", "/api/withdraw", paras, token)
 	if err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	var data struct {
@@ -112,20 +112,20 @@ func (broker *BrokerHandler) Withdraw(ctx context.Context, input *WithdrawInput,
 		Snapshot *Snapshot `json:"data,omitempty"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, requestError(err)
+		return nil, err
 	}
 
 	if data.Code == 0 {
 		return data.Snapshot, nil
 	}
-	return nil, &data.Error
+	return nil, errorWithWalletError(&data.Error)
 }
 
 // FetchWithdrawFee fetch withdraw fee
 func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin string, input *WithdrawAddress) (string, error) {
 	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
 	if err != nil {
-		return "0", requestError(err)
+		return "0", err
 	}
 
 	return broker.BrokerHandler.FetchWithdrawFee(ctx, input, token)
@@ -146,7 +146,7 @@ func (broker *BrokerHandler) FetchWithdrawFee(ctx context.Context, input *Withdr
 	}
 	b, err := broker.Request(ctx, "POST", "/api/withdraw-fee", paras, token)
 	if err != nil {
-		return "0", requestError(err)
+		return "0", err
 	}
 
 	var data struct {
@@ -156,11 +156,11 @@ func (broker *BrokerHandler) FetchWithdrawFee(ctx context.Context, input *Withdr
 		} `json:"data,omitempty"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return "0", requestError(err)
+		return "0", err
 	}
 
 	if data.Code == 0 {
 		return data.Data.Fee, nil
 	}
-	return "0", &data.Error
+	return "0", errorWithWalletError(&data.Error)
 }
