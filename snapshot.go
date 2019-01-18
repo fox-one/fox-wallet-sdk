@@ -3,7 +3,6 @@ package sdk
 import (
 	"context"
 	"encoding/json"
-	"time"
 )
 
 // Snapshot snapshot
@@ -30,7 +29,7 @@ type Snapshot struct {
 
 // FetchSnapshot fetch user snapshot
 func (broker *Broker) FetchSnapshot(ctx context.Context, userID, traceID, snapshotID string) (*Snapshot, error) {
-	token, err := broker.SignToken(userID, time.Now().Unix()+60)
+	token, err := broker.SignToken(userID, 60)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +66,7 @@ func (broker *BrokerHandler) FetchSnapshot(ctx context.Context, traceID, snapsho
 
 // FetchSnapshots fetch snapshots
 func (broker *Broker) FetchSnapshots(ctx context.Context, userID, assetID, offset, order string, limit int) ([]*Snapshot, string, error) {
-	token, err := broker.SignToken(userID, time.Now().Unix()+60)
+	token, err := broker.SignToken(userID, 60)
 	if err != nil {
 		return nil, offset, err
 	}

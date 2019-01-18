@@ -3,7 +3,6 @@ package sdk
 import (
 	"context"
 	"encoding/json"
-	"time"
 )
 
 // TransferInput input for transfer/verify payment request
@@ -38,7 +37,7 @@ type WithdrawInput struct {
 
 // Transfer transfer to account
 func (broker *Broker) Transfer(ctx context.Context, userID, pin string, input *TransferInput) (*Snapshot, error) {
-	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
+	token, err := broker.SignTokenWithPIN(userID, 60, pin)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +76,7 @@ func (broker *BrokerHandler) Transfer(ctx context.Context, input *TransferInput,
 // Withdraw withdraw to address
 //	address_id, opponent_id, amount, traceID, memo
 func (broker *Broker) Withdraw(ctx context.Context, userID, pin string, input *WithdrawInput) (*Snapshot, error) {
-	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
+	token, err := broker.SignTokenWithPIN(userID, 60, pin)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +122,7 @@ func (broker *BrokerHandler) Withdraw(ctx context.Context, input *WithdrawInput,
 
 // FetchWithdrawFee fetch withdraw fee
 func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin string, input *WithdrawAddress) (string, error) {
-	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
+	token, err := broker.SignTokenWithPIN(userID, 60, pin)
 	if err != nil {
 		return "0", err
 	}

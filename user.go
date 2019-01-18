@@ -3,7 +3,6 @@ package sdk
 import (
 	"context"
 	"encoding/json"
-	"time"
 )
 
 // User user
@@ -27,7 +26,7 @@ func (broker *Broker) CreateUser(ctx context.Context, fullname, pin string) (*Us
 		paras["pin"] = pinToken
 	}
 
-	token, err := broker.SignToken("", time.Now().Unix()+60, 1)
+	token, err := broker.SignToken("", 60, 1)
 	if err != nil {
 		return nil, err
 	}

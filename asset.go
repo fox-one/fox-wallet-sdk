@@ -3,7 +3,6 @@ package sdk
 import (
 	"context"
 	"encoding/json"
-	"time"
 )
 
 // Asset asset
@@ -42,7 +41,7 @@ type UserAsset struct {
 
 // FetchAssets fetch assets
 func (broker *Broker) FetchAssets(ctx context.Context, userID string) ([]*UserAsset, error) {
-	token, err := broker.SignToken(userID, time.Now().Unix()+60)
+	token, err := broker.SignToken(userID, 60)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +71,7 @@ func (broker *BrokerHandler) FetchAssets(ctx context.Context, token string) ([]*
 
 // FetchAsset fetch asset
 func (broker *Broker) FetchAsset(ctx context.Context, userID, assetID string) (*UserAsset, error) {
-	token, err := broker.SignToken(userID, time.Now().Unix()+60)
+	token, err := broker.SignToken(userID, 60)
 	if err != nil {
 		return nil, err
 	}

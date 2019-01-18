@@ -3,12 +3,11 @@ package sdk
 import (
 	"context"
 	"encoding/json"
-	"time"
 )
 
 // ModifyPIN modify pin
 func (broker *Broker) ModifyPIN(ctx context.Context, userID, pin, newPIN string) error {
-	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
+	token, err := broker.SignTokenWithPIN(userID, 60, pin)
 	if err != nil {
 		return err
 	}
@@ -46,7 +45,7 @@ func (broker *BrokerHandler) ModifyPIN(ctx context.Context, newPINToken, token s
 
 // VerifyPIN verify pin
 func (broker *Broker) VerifyPIN(ctx context.Context, userID, pin string) error {
-	token, err := broker.SignTokenWithPIN(userID, time.Now().Unix()+60, pin)
+	token, err := broker.SignTokenWithPIN(userID, 60, pin)
 	if err != nil {
 		return err
 	}

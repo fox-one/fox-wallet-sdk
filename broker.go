@@ -3,6 +3,7 @@ package sdk
 import (
 	"encoding/base64"
 	"fmt"
+	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/fox-one/mixin-sdk/utils"
@@ -96,7 +97,7 @@ func (b *Broker) SignTokenWithPIN(userID string, expire int64, pin string, nonce
 
 	params := map[string]interface{}{
 		"i": b.brokerID,
-		"e": expire,
+		"e": time.Now().Unix() + expire,
 		"n": uuid.Must(uuid.NewV4()).String(),
 	}
 
