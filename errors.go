@@ -35,6 +35,8 @@ var (
 	ErrAmountTooSmall = errors.New("amount too small")
 	// ErrInvalidTrace code 1513, invalid trace id
 	ErrInvalidTrace = errors.New("invalid trace id")
+	// ErrAuthFailed auth failed
+	ErrAuthFailed = errors.New("auth failed")
 )
 
 func errorWithWalletError(err *Error) error {
@@ -69,6 +71,8 @@ func errorWithWalletError(err *Error) error {
 		return ErrAmountTooSmall
 	case 1513:
 		return ErrInvalidTrace
+	case 1514:
+		return ErrAuthFailed
 	}
 	return nil
 }

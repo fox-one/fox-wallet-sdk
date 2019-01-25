@@ -64,6 +64,8 @@ var (
     ErrAmountTooSmall = errors.New("amount too small")
     // ErrInvalidTrace code 1513, invalid trace id
     ErrInvalidTrace = errors.New("invalid trace id")
+    // ErrAuthFailed auth failed
+    ErrAuthFailed = errors.New("auth failed")
 )
 ```
 

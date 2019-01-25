@@ -59,6 +59,7 @@ func main() {
 	doWithdrawFee(ctx, b, userID, assetID, publicKey, default_pin)
 
 	snapshot := doTransfer(ctx, b, dapp, userID, assetID, "0.1", default_pin)
+	log.Println(snapshot)
 
 	doWithdraw(ctx, b, dapp, userID, assetID, publicKey, "0.1", default_pin)
 
