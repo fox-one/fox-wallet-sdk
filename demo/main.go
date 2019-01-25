@@ -69,4 +69,7 @@ func main() {
 
 	doAsset(ctx, b, userID, assetID)
 	doAssets(ctx, b, userID)
+
+	doChains(ctx, b)
+	doNetworkAssets(ctx, b)
 }

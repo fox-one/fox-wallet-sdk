@@ -14,6 +14,9 @@ type Asset struct {
 	Name    string `json:"name"`
 	Symbol  string `json:"symbol"`
 	IconURL string `json:"icon_url"`
+
+	Price  string `json:"price"`
+	Change string `json:"change"`
 }
 
 // UserAddress user address
@@ -37,6 +40,66 @@ type UserAsset struct {
 	TransactionCount  int64        `json:"transaction_count"`
 	Asset             *Asset       `json:"asset,omitempty"`
 	Address           *UserAddress `json:"address,omitempty"`
+}
+
+// FetchChains fetch chains
+func (broker *Broker) FetchChains(ctx context.Context) ([]*Asset, error) {
+	token, err := broker.SignToken("", 60)
+	if err != nil {
+		return nil, err
+	}
+	return broker.BrokerHandler.FetchChains(ctx, token)
+}
+
+// FetchChains fetch chains
+func (broker *BrokerHandler) FetchChains(ctx context.Context, token string) ([]*Asset, error) {
+	b, err := broker.Request(ctx, "GET", "/api/chains", nil, token)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Error
+		Chains []*Asset `json:"data"`
+	}
+	if err := json.Unmarshal(b, &data); err != nil {
+		return nil, err
+	}
+
+	if data.Code == 0 {
+		return data.Chains, nil
+	}
+	return nil, errorWithWalletError(&data.Error)
+}
+
+// FetchNetworkAssets fetch network assets
+func (broker *Broker) FetchNetworkAssets(ctx context.Context) ([]*Asset, error) {
+	token, err := broker.SignToken("", 60)
+	if err != nil {
+		return nil, err
+	}
+	return broker.BrokerHandler.FetchNetworkAssets(ctx, token)
+}
+
+// FetchNetworkAssets fetch network assets
+func (broker *BrokerHandler) FetchNetworkAssets(ctx context.Context, token string) ([]*Asset, error) {
+	b, err := broker.Request(ctx, "GET", "/api/network-assets", nil, token)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Error
+		Assets []*Asset `json:"data"`
+	}
+	if err := json.Unmarshal(b, &data); err != nil {
+		return nil, err
+	}
+
+	if data.Code == 0 {
+		return data.Assets, nil
+	}
+	return nil, errorWithWalletError(&data.Error)
 }
 
 // FetchAssets fetch assets
