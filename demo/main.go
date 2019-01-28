@@ -73,4 +73,5 @@ func main() {
 
 	doChains(ctx, b)
 	doNetworkAssets(ctx, b)
+	doExchangeRates(ctx, b)
 }

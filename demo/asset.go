@@ -27,6 +27,16 @@ func doNetworkAssets(ctx context.Context, b *sdk.Broker) []*sdk.Asset {
 	return assets
 }
 
+func doExchangeRates(ctx context.Context, b *sdk.Broker) []*sdk.ExRate {
+	exRates, err := b.FetchExRates(ctx)
+	if err != nil {
+		log.Panicln(err)
+	}
+	printJSON("fetch exchange rates", exRates)
+
+	return exRates
+}
+
 func doAssets(ctx context.Context, b *sdk.Broker, userID string) []*sdk.UserAsset {
 	assets, err := b.FetchAssets(ctx, userID)
 	if err != nil {
