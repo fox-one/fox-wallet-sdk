@@ -15,8 +15,9 @@ type Asset struct {
 	Symbol  string `json:"symbol"`
 	IconURL string `json:"icon_url"`
 
-	Price  string `json:"price"`
-	Change string `json:"change"`
+	Price    string `json:"price"`
+	PriceUSD string `json:"price_usd"`
+	Change   string `json:"change"`
 }
 
 // UserAddress user address
