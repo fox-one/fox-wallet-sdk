@@ -27,7 +27,7 @@ func doNetworkAssets(ctx context.Context, b *sdk.Broker) []*sdk.Asset {
 	return assets
 }
 
-func doExchangeRates(ctx context.Context, b *sdk.Broker) []*sdk.ExRate {
+func doExchangeRates(ctx context.Context, b *sdk.Broker) *sdk.ExRateResp {
 	exRates, err := b.FetchExRates(ctx)
 	if err != nil {
 		log.Panicln(err)

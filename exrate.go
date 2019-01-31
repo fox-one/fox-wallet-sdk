@@ -13,25 +13,34 @@ type ExRate struct {
 	Change string `json:"change"`
 }
 
-// FetchExRates fetch exchange rates, if currencies is empty, will return all
-func (broker *BrokerHandler) FetchExRates(ctx context.Context, currencies ...string) ([]*ExRate, error) {
-	b, err := broker.Request(ctx, "GET", "/api/exchange-rates", nil, "")
+// ExRateResp exchange rate response
+type ExRateResp struct {
+	ExRates    []*ExRate         `json:"cnyTickers"`
+	Currencies map[string]string `json:"currencies"`
+}
+
+// FetchExRatesRaw fetch exchange rates
+func (broker *BrokerHandler) FetchExRatesRaw(ctx context.Context) ([]byte, error) {
+	return broker.Request(ctx, "GET", "/api/exchange-rates", nil, "")
+}
+
+// FetchExRates fetch exchange rates
+func (broker *BrokerHandler) FetchExRates(ctx context.Context) (*ExRateResp, error) {
+	b, err := broker.FetchExRatesRaw(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	var data struct {
 		Error
-		Data *struct {
-			ExRates []*ExRate `json:"cnyTickers"`
-		} `json:"data"`
+		Data *ExRateResp `json:"data"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
 		return nil, err
 	}
 
 	if data.Code == 0 {
-		return data.Data.ExRates, nil
+		return data.Data, nil
 	}
 	return nil, errorWithWalletError(&data.Error)
 }
