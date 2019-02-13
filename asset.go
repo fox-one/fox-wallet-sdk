@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"encoding/json"
+	"errors"
 )
 
 // Asset asset
@@ -64,7 +65,7 @@ func (broker *BrokerHandler) FetchChains(ctx context.Context, token string) ([]*
 		Chains []*Asset `json:"data"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, err
+		return nil, errors.New(string(b))
 	}
 
 	if data.Code == 0 {
@@ -94,7 +95,7 @@ func (broker *BrokerHandler) FetchNetworkAssets(ctx context.Context, token strin
 		Assets []*Asset `json:"data"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, err
+		return nil, errors.New(string(b))
 	}
 
 	if data.Code == 0 {
@@ -124,7 +125,7 @@ func (broker *BrokerHandler) FetchAssets(ctx context.Context, token string) ([]*
 		Assets []*UserAsset `json:"data"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, err
+		return nil, errors.New(string(b))
 	}
 
 	if data.Code == 0 {
@@ -154,7 +155,7 @@ func (broker *BrokerHandler) FetchAsset(ctx context.Context, assetID, token stri
 		Asset *UserAsset `json:"data"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, err
+		return nil, errors.New(string(b))
 	}
 
 	if data.Code == 0 {

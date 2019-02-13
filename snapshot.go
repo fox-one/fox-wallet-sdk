@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"encoding/json"
+	"errors"
 )
 
 // Snapshot snapshot
@@ -55,7 +56,7 @@ func (broker *BrokerHandler) FetchSnapshot(ctx context.Context, traceID, snapsho
 		Snapshot *Snapshot `json:"data"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, err
+		return nil, errors.New(string(b))
 	}
 
 	if data.Code == 0 {
@@ -97,7 +98,7 @@ func (broker *BrokerHandler) FetchSnapshots(ctx context.Context, assetID, offset
 		NextOffset string      `json:"next_offset"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, offset, err
+		return nil, offset, errors.New(string(b))
 	}
 
 	if data.Code == 0 {
