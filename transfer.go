@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"encoding/json"
+	"errors"
 )
 
 // TransferInput input for transfer/verify payment request
@@ -64,7 +65,7 @@ func (broker *BrokerHandler) Transfer(ctx context.Context, input *TransferInput,
 		Snapshot *Snapshot `json:"data,omitempty"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, err
+		return nil, errors.New(string(b))
 	}
 
 	if data.Code == 0 {
@@ -111,7 +112,7 @@ func (broker *BrokerHandler) Withdraw(ctx context.Context, input *WithdrawInput,
 		Snapshot *Snapshot `json:"data,omitempty"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, err
+		return nil, errors.New(string(b))
 	}
 
 	if data.Code == 0 {
@@ -155,7 +156,7 @@ func (broker *BrokerHandler) FetchWithdrawFee(ctx context.Context, input *Withdr
 		} `json:"data,omitempty"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return "0", err
+		return "0", errors.New(string(b))
 	}
 
 	if data.Code == 0 {

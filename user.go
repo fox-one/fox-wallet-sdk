@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"encoding/json"
+	"errors"
 )
 
 // User user
@@ -41,7 +42,7 @@ func (broker *Broker) CreateUser(ctx context.Context, fullname, pin string) (*Us
 		User *User `json:"data"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, err
+		return nil, errors.New(string(b))
 	}
 
 	if data.Code == 0 {

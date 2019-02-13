@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"encoding/json"
+	"errors"
 )
 
 // ModifyPIN modify pin
@@ -34,7 +35,7 @@ func (broker *BrokerHandler) ModifyPIN(ctx context.Context, newPINToken, token s
 		Error
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return err
+		return errors.New(string(b))
 	}
 
 	if data.Code == 0 {
@@ -64,7 +65,7 @@ func (broker *BrokerHandler) VerifyPIN(ctx context.Context, token string) error 
 		Error
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return err
+		return errors.New(string(b))
 	}
 
 	if data.Code == 0 {

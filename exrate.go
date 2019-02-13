@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"encoding/json"
+	"errors"
 )
 
 // ExRate exchange rate
@@ -36,7 +37,7 @@ func (broker *BrokerHandler) FetchExRates(ctx context.Context) (*ExRateResp, err
 		Data *ExRateResp `json:"data"`
 	}
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, err
+		return nil, errors.New(string(b))
 	}
 
 	if data.Code == 0 {
