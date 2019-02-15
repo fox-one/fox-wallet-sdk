@@ -38,6 +38,6 @@ func (broker *BrokerHandler) Request(ctx context.Context, method, uri string, pa
 	}
 
 	req = req.WithContext(ctx)
-	resp, _ := utils.DoRequest(req)
-	return utils.ReadResponse(resp)
+	result := utils.DoRequest(req)
+	return result.Bytes()
 }
