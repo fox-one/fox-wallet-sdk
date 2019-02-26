@@ -2,8 +2,9 @@ package sdk
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 // User user
@@ -41,7 +42,7 @@ func (broker *Broker) CreateUser(ctx context.Context, fullname, pin string) (*Us
 		Error
 		User *User `json:"data"`
 	}
-	if err := json.Unmarshal(b, &data); err != nil {
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return nil, errors.New(string(b))
 	}
 

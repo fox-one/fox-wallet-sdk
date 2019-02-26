@@ -2,8 +2,9 @@ package sdk
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 // Asset asset
@@ -64,7 +65,7 @@ func (broker *BrokerHandler) FetchChains(ctx context.Context, token string) ([]*
 		Error
 		Chains []*Asset `json:"data"`
 	}
-	if err := json.Unmarshal(b, &data); err != nil {
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return nil, errors.New(string(b))
 	}
 
@@ -94,7 +95,7 @@ func (broker *BrokerHandler) FetchNetworkAssets(ctx context.Context, token strin
 		Error
 		Assets []*Asset `json:"data"`
 	}
-	if err := json.Unmarshal(b, &data); err != nil {
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return nil, errors.New(string(b))
 	}
 
@@ -124,7 +125,7 @@ func (broker *BrokerHandler) FetchAssets(ctx context.Context, token string) ([]*
 		Error
 		Assets []*UserAsset `json:"data"`
 	}
-	if err := json.Unmarshal(b, &data); err != nil {
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return nil, errors.New(string(b))
 	}
 
@@ -154,7 +155,7 @@ func (broker *BrokerHandler) FetchAsset(ctx context.Context, assetID, token stri
 		Error
 		Asset *UserAsset `json:"data"`
 	}
-	if err := json.Unmarshal(b, &data); err != nil {
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return nil, errors.New(string(b))
 	}
 

@@ -2,8 +2,9 @@ package sdk
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 // TransferInput input for transfer/verify payment request
@@ -64,7 +65,7 @@ func (broker *BrokerHandler) Transfer(ctx context.Context, input *TransferInput,
 		Error
 		Snapshot *Snapshot `json:"data,omitempty"`
 	}
-	if err := json.Unmarshal(b, &data); err != nil {
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return nil, errors.New(string(b))
 	}
 
@@ -111,7 +112,7 @@ func (broker *BrokerHandler) Withdraw(ctx context.Context, input *WithdrawInput,
 		Error
 		Snapshot *Snapshot `json:"data,omitempty"`
 	}
-	if err := json.Unmarshal(b, &data); err != nil {
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return nil, errors.New(string(b))
 	}
 
@@ -155,7 +156,7 @@ func (broker *BrokerHandler) FetchWithdrawFee(ctx context.Context, input *Withdr
 			Fee string `json:"fee"`
 		} `json:"data,omitempty"`
 	}
-	if err := json.Unmarshal(b, &data); err != nil {
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return "0", errors.New(string(b))
 	}
 

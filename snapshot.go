@@ -2,8 +2,9 @@ package sdk
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 // Snapshot snapshot
@@ -55,7 +56,7 @@ func (broker *BrokerHandler) FetchSnapshot(ctx context.Context, traceID, snapsho
 		Error
 		Snapshot *Snapshot `json:"data"`
 	}
-	if err := json.Unmarshal(b, &data); err != nil {
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return nil, errors.New(string(b))
 	}
 
@@ -97,7 +98,7 @@ func (broker *BrokerHandler) FetchSnapshots(ctx context.Context, assetID, offset
 		Snapshots  []*Snapshot `json:"data"`
 		NextOffset string      `json:"next_offset"`
 	}
-	if err := json.Unmarshal(b, &data); err != nil {
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return nil, offset, errors.New(string(b))
 	}
 

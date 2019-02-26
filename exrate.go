@@ -2,8 +2,9 @@ package sdk
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 // ExRate exchange rate
@@ -36,7 +37,7 @@ func (broker *BrokerHandler) FetchExRates(ctx context.Context) (*ExRateResp, err
 		Error
 		Data *ExRateResp `json:"data"`
 	}
-	if err := json.Unmarshal(b, &data); err != nil {
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return nil, errors.New(string(b))
 	}
 

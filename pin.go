@@ -2,8 +2,9 @@ package sdk
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 // ModifyPIN modify pin
@@ -34,7 +35,7 @@ func (broker *BrokerHandler) ModifyPIN(ctx context.Context, newPINToken, token s
 	var data struct {
 		Error
 	}
-	if err := json.Unmarshal(b, &data); err != nil {
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return errors.New(string(b))
 	}
 
@@ -64,7 +65,7 @@ func (broker *BrokerHandler) VerifyPIN(ctx context.Context, token string) error 
 	var data struct {
 		Error
 	}
-	if err := json.Unmarshal(b, &data); err != nil {
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return errors.New(string(b))
 	}
 

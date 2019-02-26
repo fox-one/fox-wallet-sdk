@@ -2,11 +2,11 @@ package sdk
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/fox-one/mixin-sdk/utils"
+	jsoniter "github.com/json-iterator/go"
 )
 
 // Request send request
@@ -22,7 +22,7 @@ func (broker *BrokerHandler) Request(ctx context.Context, method, uri string, pa
 		uri = uri + "?" + strings.Join(arr, "&")
 
 	case "POST", "PUT":
-		b, err := json.Marshal(params)
+		b, err := jsoniter.Marshal(params)
 		if err != nil {
 			return nil, err
 		}
