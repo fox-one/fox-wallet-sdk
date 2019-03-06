@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	jsoniter "github.com/json-iterator/go"
+	"github.com/shopspring/decimal"
 )
 
 // Asset asset
@@ -17,9 +18,9 @@ type Asset struct {
 	Symbol  string `json:"symbol"`
 	IconURL string `json:"icon_url"`
 
-	Price    string `json:"price"`
-	PriceUSD string `json:"price_usd"`
-	Change   string `json:"change"`
+	Price    decimal.Decimal `json:"price"`
+	PriceUSD decimal.Decimal `json:"price_usd"`
+	Change   decimal.Decimal `json:"change"`
 }
 
 // UserAddress user address
