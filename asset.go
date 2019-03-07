@@ -38,12 +38,12 @@ type UserAddress struct {
 
 // UserAsset user asset
 type UserAsset struct {
-	AssetID           string       `json:"asset_id"`
-	Balance           string       `json:"balance"`
-	TransactionAmount string       `json:"transaction_amount"`
-	TransactionCount  int64        `json:"transaction_count"`
-	Asset             *Asset       `json:"asset,omitempty"`
-	Address           *UserAddress `json:"address,omitempty"`
+	AssetID           string          `json:"asset_id"`
+	Balance           decimal.Decimal `json:"balance"`
+	TransactionAmount decimal.Decimal `json:"transaction_amount"`
+	TransactionCount  int64           `json:"transaction_count"`
+	Asset             *Asset          `json:"asset,omitempty"`
+	Address           *UserAddress    `json:"address,omitempty"`
 }
 
 // FetchChains fetch chains
