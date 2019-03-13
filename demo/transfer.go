@@ -81,11 +81,11 @@ func doWithdrawFee(ctx context.Context, b *sdk.Broker, userID, assetID, publicKe
 		AssetID:   assetID,
 		PublicKey: publicKey,
 	}
-	feeAssetID, fee, err := b.FetchWithdrawFee(ctx, userID, pin, input)
+	feeAsset, fee, err := b.FetchWithdrawFee(ctx, userID, pin, input)
 	if err != nil {
 		log.Panicln(err)
 	}
-	printJSON("fetch withdraw fee", []string{feeAssetID, fee})
+	printJSON("fetch withdraw fee", []string{feeAsset.Symbol, fee})
 
 	return fee
 }
