@@ -123,17 +123,17 @@ func (broker *BrokerHandler) Withdraw(ctx context.Context, input *WithdrawInput,
 }
 
 // FetchWithdrawFee fetch withdraw fee
-func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin string, input *WithdrawAddress) (string, error) {
+func (broker *Broker) FetchWithdrawFee(ctx context.Context, userID, pin string, input *WithdrawAddress) (string, string, error) {
 	token, err := broker.SignTokenWithPIN(userID, 60, pin)
 	if err != nil {
-		return "0", err
+		return "", "0", err
 	}
 
 	return broker.BrokerHandler.FetchWithdrawFee(ctx, input, token)
 }
 
 // FetchWithdrawFee fetch withdraw fee
-func (broker *BrokerHandler) FetchWithdrawFee(ctx context.Context, input *WithdrawAddress, token string) (string, error) {
+func (broker *BrokerHandler) FetchWithdrawFee(ctx context.Context, input *WithdrawAddress, token string) (string, string, error) {
 	paras := map[string]interface{}{
 		"asset_id": input.AssetID,
 	}
@@ -147,21 +147,22 @@ func (broker *BrokerHandler) FetchWithdrawFee(ctx context.Context, input *Withdr
 	}
 	b, err := broker.Request(ctx, "POST", "/api/withdraw-fee", paras, token)
 	if err != nil {
-		return "0", err
+		return "", "0", err
 	}
 
 	var data struct {
 		Error
 		Data *struct {
-			Fee string `json:"fee"`
+			Fee        string `json:"fee"`
+			FeeAssetID string `json:"fee_asset_id"`
 		} `json:"data,omitempty"`
 	}
 	if err := jsoniter.Unmarshal(b, &data); err != nil {
-		return "0", errors.New(string(b))
+		return "", "0", errors.New(string(b))
 	}
 
 	if data.Code == 0 {
-		return data.Data.Fee, nil
+		return data.Data.FeeAssetID, data.Data.Fee, nil
 	}
-	return "0", errorWithWalletError(&data.Error)
+	return "", "0", errorWithWalletError(&data.Error)
 }
