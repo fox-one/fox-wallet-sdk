@@ -27,6 +27,12 @@ func doNetworkAssets(ctx context.Context, b *sdk.Broker) []*sdk.Asset {
 	return assets
 }
 
+func doValidateBalance(ctx context.Context, b *sdk.Broker, userID string) {
+	resp, err := b.ValidateBalances(ctx, userID)
+	log.Println(err)
+	printJSON("validate balances", resp)
+}
+
 func doExchangeRates(ctx context.Context, b *sdk.Broker) *sdk.ExRateResp {
 	exRates, err := b.FetchExRates(ctx)
 	if err != nil {

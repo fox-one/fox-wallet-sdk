@@ -46,6 +46,21 @@ type UserAsset struct {
 	Address           *UserAddress    `json:"address,omitempty"`
 }
 
+// UserBalance user asset balance
+type UserBalance struct {
+	AssetID    string          `json:"asset_id"`
+	Matched    bool            `json:"matched"`
+	Balance    decimal.Decimal `json:"balance"`
+	FoxBalance decimal.Decimal `json:"fox_balance"`
+}
+
+// ValidateUserBalanceResp validate user assets response
+type ValidateUserBalanceResp struct {
+	UserID  string                  `json:"user_id"`
+	Matched bool                    `json:"matched"`
+	Assets  map[string]*UserBalance `json:"assets"`
+}
+
 // FetchChains fetch chains
 func (broker *Broker) FetchChains(ctx context.Context) ([]*Asset, error) {
 	token, err := broker.SignToken("", 60)
@@ -162,6 +177,35 @@ func (broker *BrokerHandler) FetchAsset(ctx context.Context, assetID, token stri
 
 	if data.Code == 0 {
 		return data.Asset, nil
+	}
+	return nil, errorWithWalletError(&data.Error)
+}
+
+// ValidateBalances validate balances
+func (broker *Broker) ValidateBalances(ctx context.Context, userIDs ...string) ([]*ValidateUserBalanceResp, error) {
+	token, err := broker.SignToken("", 60)
+	if err != nil {
+		return nil, err
+	}
+
+	params := map[string]interface{}{
+		"users": userIDs,
+	}
+	b, err := broker.Request(ctx, "POST", "/api/balance-validate", params, token)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Error
+		Data []*ValidateUserBalanceResp `json:"data"`
+	}
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
+		return nil, errors.New(string(b))
+	}
+
+	if data.Code == 0 {
+		return data.Data, nil
 	}
 	return nil, errorWithWalletError(&data.Error)
 }
