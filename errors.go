@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"errors"
+	"fmt"
 )
 
 var (
@@ -74,7 +75,8 @@ func errorWithWalletError(err *Error) error {
 	case 1514:
 		return ErrAuthFailed
 	}
-	return nil
+
+	return err
 }
 
 const (
@@ -87,4 +89,8 @@ type Error struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg,omitempty"`
 	Hint string `json:"hint,omitempty"`
+}
+
+func (e *Error) Error() string {
+	return fmt.Sprintf("%d %s", e.Code, e.Msg)
 }
