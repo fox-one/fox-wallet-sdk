@@ -20,6 +20,7 @@ type Asset struct {
 
 	Price    decimal.Decimal `json:"price"`
 	PriceUSD decimal.Decimal `json:"price_usd"`
+	PriceBTC decimal.Decimal `json:"price_btc"`
 	Change   decimal.Decimal `json:"change"`
 }
 
