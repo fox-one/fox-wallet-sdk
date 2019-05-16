@@ -12,6 +12,8 @@ type User struct {
 	UserID   string `json:"user_id"`
 	BrokerID string `json:"broker_id,omitempty"`
 	FullName string `json:"full_name,omitempty"`
+	Avatar   string `json:"avatar_url,omitempty"`
+	Inside   bool   `json:"inside"`
 }
 
 // CreateUser create user
@@ -34,6 +36,27 @@ func (broker *Broker) CreateUser(ctx context.Context, fullname, pin string) (*Us
 	}
 
 	b, err := broker.Request(ctx, "POST", "/api/users", paras, token)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Error
+		User *User `json:"data"`
+	}
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
+		return nil, errors.New(string(b))
+	}
+
+	if data.Code == 0 {
+		return data.User, nil
+	}
+	return nil, errorWithWalletError(&data.Error)
+}
+
+// FetchUser fetch user
+func (broker *BrokerHandler) FetchUser(ctx context.Context, userID string) (*User, error) {
+	b, err := broker.Request(ctx, "GET", "/api/users/"+userID, nil, "")
 	if err != nil {
 		return nil, err
 	}

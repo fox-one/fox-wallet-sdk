@@ -63,17 +63,8 @@ type ValidateUserBalanceResp struct {
 }
 
 // FetchChains fetch chains
-func (broker *Broker) FetchChains(ctx context.Context) ([]*Asset, error) {
-	token, err := broker.SignToken("", 60)
-	if err != nil {
-		return nil, err
-	}
-	return broker.BrokerHandler.FetchChains(ctx, token)
-}
-
-// FetchChains fetch chains
-func (broker *BrokerHandler) FetchChains(ctx context.Context, token string) ([]*Asset, error) {
-	b, err := broker.Request(ctx, "GET", "/api/chains", nil, token)
+func (broker *BrokerHandler) FetchChains(ctx context.Context) ([]*Asset, error) {
+	b, err := broker.Request(ctx, "GET", "/api/chains", nil, "")
 	if err != nil {
 		return nil, err
 	}
@@ -93,17 +84,8 @@ func (broker *BrokerHandler) FetchChains(ctx context.Context, token string) ([]*
 }
 
 // FetchNetworkAssets fetch network assets
-func (broker *Broker) FetchNetworkAssets(ctx context.Context) ([]*Asset, error) {
-	token, err := broker.SignToken("", 60)
-	if err != nil {
-		return nil, err
-	}
-	return broker.BrokerHandler.FetchNetworkAssets(ctx, token)
-}
-
-// FetchNetworkAssets fetch network assets
-func (broker *BrokerHandler) FetchNetworkAssets(ctx context.Context, token string) ([]*Asset, error) {
-	b, err := broker.Request(ctx, "GET", "/api/network-assets", nil, token)
+func (broker *BrokerHandler) FetchNetworkAssets(ctx context.Context) ([]*Asset, error) {
+	b, err := broker.Request(ctx, "GET", "/api/network-assets", nil, "")
 	if err != nil {
 		return nil, err
 	}

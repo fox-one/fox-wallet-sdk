@@ -56,7 +56,7 @@ func main() {
 		log.Panicln("should have at least one asset")
 	}
 
-	doWithdrawFee(ctx, b, userID, assetID, publicKey, default_pin)
+	doWithdrawFee(ctx, b, assetID, publicKey)
 
 	snapshot := doTransfer(ctx, b, dapp, userID, assetID, "0.1", default_pin)
 	log.Println(snapshot)

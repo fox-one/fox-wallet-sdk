@@ -76,12 +76,12 @@ func doWithdraw(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, as
 	return snapshot
 }
 
-func doWithdrawFee(ctx context.Context, b *sdk.Broker, userID, assetID, publicKey, pin string) string {
+func doWithdrawFee(ctx context.Context, b *sdk.Broker, assetID, publicKey string) string {
 	input := &sdk.WithdrawAddress{
 		AssetID:   assetID,
 		PublicKey: publicKey,
 	}
-	feeAsset, fee, err := b.FetchWithdrawFee(ctx, userID, pin, input)
+	feeAsset, fee, err := b.FetchWithdrawFee(ctx, input)
 	if err != nil {
 		log.Panicln(err)
 	}

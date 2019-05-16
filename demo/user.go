@@ -17,6 +17,16 @@ func doCreateUser(ctx context.Context, b *sdk.Broker, pin string) *sdk.User {
 	return u
 }
 
+func doFetchUser(ctx context.Context, b *sdk.Broker, userID string) *sdk.User {
+	u, e := b.FetchUser(ctx, userID)
+	if e != nil {
+		log.Panicln(e)
+	}
+	printJSON("fetch user", u)
+
+	return u
+}
+
 func doModifyPIN(ctx context.Context, b *sdk.Broker, userID string, pin, newPIN string) {
 	err := b.ModifyPIN(ctx, userID, pin, newPIN)
 	if err != nil {

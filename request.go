@@ -29,7 +29,10 @@ func (broker *BrokerHandler) Request(ctx context.Context, method, uri string, pa
 		body = b
 	}
 
-	headers = append(headers, "Content-Type", "application/json", "Authorization", "Bearer "+token)
+	headers = append(headers, "Content-Type", "application/json")
+	if len(token) > 0 {
+		headers = append(headers, "Authorization", "Bearer "+token)
+	}
 
 	url := broker.apiBase + uri
 	req, err := utils.NewRequest(url, method, string(body), headers...)
