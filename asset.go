@@ -18,10 +18,12 @@ type Asset struct {
 	Symbol  string `json:"symbol"`
 	IconURL string `json:"icon_url"`
 
-	Price    decimal.Decimal `json:"price"`
-	PriceUSD decimal.Decimal `json:"price_usd"`
-	PriceBTC decimal.Decimal `json:"price_btc"`
-	Change   decimal.Decimal `json:"change"`
+	Price     decimal.Decimal `json:"price"`
+	PriceUSD  decimal.Decimal `json:"price_usd"`
+	PriceBTC  decimal.Decimal `json:"price_btc"`
+	Change    decimal.Decimal `json:"change"`
+	ChangeUSD decimal.Decimal `json:"change_usd"`
+	ChangeBTC decimal.Decimal `json:"change_btc"`
 }
 
 // UserAddress user address
@@ -44,6 +46,7 @@ type UserAsset struct {
 	TransactionAmount decimal.Decimal `json:"transaction_amount"`
 	TransactionCount  int64           `json:"transaction_count"`
 	Asset             *Asset          `json:"asset,omitempty"`
+	Chain             *Asset          `json:"chain,omitempty"`
 	Address           *UserAddress    `json:"address,omitempty"`
 }
 
