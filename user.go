@@ -17,13 +17,13 @@ type User struct {
 }
 
 // CreateUser create user
-func (broker *Broker) CreateUser(ctx context.Context, fullname, avatar, pin string) (*User, error) {
+func (broker *Broker) CreateUser(ctx context.Context, fullname, pin string, avatar ...string) (*User, error) {
 	paras := map[string]interface{}{}
 	if fullname != "" {
 		paras["full_name"] = fullname
 	}
-	if avatar != "" {
-		paras["avatar"] = avatar
+	if len(avatar) > 0 && avatar[0] != "" {
+		paras["avatar"] = avatar[0]
 	}
 	if pin != "" {
 		pinToken, _, err := broker.PINToken(pin)

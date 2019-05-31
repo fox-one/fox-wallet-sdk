@@ -8,7 +8,7 @@ import (
 )
 
 func doCreateUser(ctx context.Context, b *sdk.Broker, pin string) *sdk.User {
-	u, e := b.CreateUser(ctx, "", "", pin)
+	u, e := b.CreateUser(ctx, "", pin, "")
 	if e != nil {
 		log.Panicln(e)
 	}
