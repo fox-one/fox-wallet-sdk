@@ -57,7 +57,18 @@ AESCBC([]byte(encryptPrefix+pin+";"+nonce), pinSecret, []byte(brokerID))
 //  Broker Sign Required
 //  Method: POST
 //  URL:    /api/users
-//  Params: {"full_name":"xxxx","pin":"0123456"}
+//  Params: {"full_name":"xxxx","avatar":"https://xxx","pin":"0123456"}
+//  Return: {"data":{USER}}
+```
+
+## Modify User
+
+```go
+// doModifyUser modify user
+//  Broker Sign Required
+//  Method: PUT
+//  URL:    /api/users
+//  Params: {"full_name":"xxxx","avatar":"https://xxx"}
 //  Return: {"data":{USER}}
 ```
 

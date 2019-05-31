@@ -45,6 +45,8 @@ func main() {
 	tmpPIN := "123456"
 	userID := doCreateUser(ctx, b, tmpPIN).UserID
 
+	doModifyUser(ctx, b, userID)
+
 	doVerifyPIN(ctx, b, userID, tmpPIN)
 
 	doModifyPIN(ctx, b, userID, tmpPIN, default_pin)

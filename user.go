@@ -17,12 +17,15 @@ type User struct {
 }
 
 // CreateUser create user
-func (broker *Broker) CreateUser(ctx context.Context, fullname, pin string) (*User, error) {
+func (broker *Broker) CreateUser(ctx context.Context, fullname, avatar, pin string) (*User, error) {
 	paras := map[string]interface{}{}
-	if len(fullname) > 0 {
+	if fullname != "" {
 		paras["full_name"] = fullname
 	}
-	if len(pin) > 0 {
+	if avatar != "" {
+		paras["avatar"] = avatar
+	}
+	if pin != "" {
 		pinToken, _, err := broker.PINToken(pin)
 		if err != nil {
 			return nil, err
@@ -36,6 +39,43 @@ func (broker *Broker) CreateUser(ctx context.Context, fullname, pin string) (*Us
 	}
 
 	b, err := broker.Request(ctx, "POST", "/api/users", paras, token)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Error
+		User *User `json:"data"`
+	}
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
+		return nil, errors.New(string(b))
+	}
+
+	if data.Code == 0 {
+		return data.User, nil
+	}
+	return nil, errorWithWalletError(&data.Error)
+}
+
+// ModifyUser modify user
+func (broker *Broker) ModifyUser(ctx context.Context, userID, fullname, avatar string) (*User, error) {
+	token, err := broker.SignToken(userID, 60)
+	if err != nil {
+		return nil, err
+	}
+	return broker.BrokerHandler.ModifyUser(ctx, fullname, avatar, token)
+}
+
+// ModifyUser modify user
+func (broker *BrokerHandler) ModifyUser(ctx context.Context, fullname, avatar, token string) (*User, error) {
+	paras := map[string]interface{}{}
+	if fullname != "" {
+		paras["full_name"] = fullname
+	}
+	if avatar != "" {
+		paras["avatar"] = avatar
+	}
+	b, err := broker.Request(ctx, "PUT", "/api/users", paras, token)
 	if err != nil {
 		return nil, err
 	}
