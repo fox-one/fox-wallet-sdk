@@ -114,3 +114,27 @@ func (broker *BrokerHandler) FetchUser(ctx context.Context, userID string) (*Use
 	}
 	return nil, errorWithWalletError(&data.Error)
 }
+
+// FetchUsers fetch users
+func (broker *BrokerHandler) FetchUsers(ctx context.Context, userIDs ...string) ([]*User, error) {
+	paras := map[string]interface{}{
+		"users": userIDs,
+	}
+	b, err := broker.Request(ctx, "POST", "/api/users/fetch", paras, "")
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Error
+		Users []*User `json:"data"`
+	}
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
+		return nil, errors.New(string(b))
+	}
+
+	if data.Code == 0 {
+		return data.Users, nil
+	}
+	return nil, errorWithWalletError(&data.Error)
+}

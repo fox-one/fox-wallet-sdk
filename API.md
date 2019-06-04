@@ -72,6 +72,25 @@ AESCBC([]byte(encryptPrefix+pin+";"+nonce), pinSecret, []byte(brokerID))
 //  Return: {"data":{USER}}
 ```
 
+## Fetch User
+
+```go
+// doFetchUser fetch user
+//  Method: GET
+//  URL:    /api/users/:user-id
+//  Return: {"data":{USER}}
+```
+
+## Fetch Users
+
+```go
+// doFetchUsers fetch users
+//  Method: POST
+//  URL:    /api/users/fetch
+//  Params: {"users":["user_id"]}
+//  Return: {"data":[{USER}]}
+```
+
 ## Modify PIN
 
 ```go

@@ -40,6 +40,16 @@ func doFetchUser(ctx context.Context, b *sdk.Broker, userID string) *sdk.User {
 	return u
 }
 
+func doFetchUsers(ctx context.Context, b *sdk.Broker, userID string) []*sdk.User {
+	us, e := b.FetchUsers(ctx, userID)
+	if e != nil {
+		log.Panicln(e)
+	}
+	printJSON("fetch users", us)
+
+	return us
+}
+
 func doModifyPIN(ctx context.Context, b *sdk.Broker, userID string, pin, newPIN string) {
 	err := b.ModifyPIN(ctx, userID, pin, newPIN)
 	if err != nil {

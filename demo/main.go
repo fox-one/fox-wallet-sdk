@@ -44,6 +44,8 @@ func main() {
 
 	tmpPIN := "123456"
 	userID := doCreateUser(ctx, b, tmpPIN).UserID
+	doFetchUser(ctx, b, userID)
+	doFetchUsers(ctx, b, userID)
 
 	doModifyUser(ctx, b, userID)
 
