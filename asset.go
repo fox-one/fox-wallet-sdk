@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"errors"
+	"time"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/shopspring/decimal"
@@ -48,6 +49,8 @@ type UserAsset struct {
 	Asset             *Asset          `json:"asset,omitempty"`
 	Chain             *Asset          `json:"chain,omitempty"`
 	Address           *UserAddress    `json:"address,omitempty"`
+
+	LastTransactionTime time.Time `json:"last_transaction_time,omitempty"`
 }
 
 // UserBalance user asset balance
