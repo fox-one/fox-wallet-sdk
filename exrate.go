@@ -12,7 +12,7 @@ type ExRate struct {
 	From   string `json:"from"`
 	To     string `json:"to"`
 	Price  string `json:"price"`
-	Change string `json:"change"`
+	Change string `json:"changeIn24h"`
 }
 
 // ExRateResp exchange rate response
