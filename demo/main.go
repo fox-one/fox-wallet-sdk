@@ -47,7 +47,9 @@ func main() {
 	doFetchUser(ctx, b, userID)
 	doFetchUsers(ctx, b, userID)
 
-	doModifyUser(ctx, b, userID)
+	fullname := "test"
+	avatar := "https://images.mixin.one/7y_5w1rpGkFs_65XTvvJ37ZqsOy0t2D-qdSUVfw9LykUyE4gAWH3OMU5kxGVsJSdq3oVXx6Qz1KuJYRiOi6_5fQ=s256"
+	doModifyUser(ctx, b, userID, fullname, avatar)
 
 	doVerifyPIN(ctx, b, userID, tmpPIN)
 

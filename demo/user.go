@@ -17,15 +17,13 @@ func doCreateUser(ctx context.Context, b *sdk.Broker, pin string) *sdk.User {
 	return u
 }
 
-func doModifyUser(ctx context.Context, b *sdk.Broker, userID string) *sdk.User {
-	fullname := "test"
-	avatar := "https://images.mixin.one/7y_5w1rpGkFs_65XTvvJ37ZqsOy0t2D-qdSUVfw9LykUyE4gAWH3OMU5kxGVsJSdq3oVXx6Qz1KuJYRiOi6_5fQ=s256"
+func doModifyUser(ctx context.Context, b *sdk.Broker, userID, fullname, avatar string) *sdk.User {
 	u, e := b.ModifyUser(ctx, userID, fullname, avatar)
 	if e != nil {
 		log.Panicln(e)
 	}
 
-	printJSON("fetch user", u)
+	printJSON("modify user", u)
 
 	return u
 }
