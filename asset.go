@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	jsoniter "github.com/json-iterator/go"
@@ -74,6 +75,14 @@ type ValidateUserBalanceResp struct {
 	UserID  string                  `json:"user_id"`
 	Matched bool                    `json:"matched"`
 	Assets  map[string]*UserBalance `json:"assets"`
+}
+
+// BrokerUserBalance user balance with broker id
+type BrokerUserBalance struct {
+	BrokerID string          `json:"broker_id"`
+	UserID   string          `json:"user_id"`
+	AssetID  string          `json:"asset_id"`
+	Balance  decimal.Decimal `json:"balance"`
 }
 
 // FetchChains fetch chains
@@ -196,6 +205,33 @@ func (broker *Broker) ValidateBalances(ctx context.Context, userIDs ...string) (
 	var data struct {
 		Error
 		Data []*ValidateUserBalanceResp `json:"data"`
+	}
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
+		return nil, errors.New(string(b))
+	}
+
+	if data.Code == 0 {
+		return data.Data, nil
+	}
+	return nil, errorWithWalletError(&data.Error)
+}
+
+// ScanAssets scan assets
+func (broker *Broker) ScanAssets(ctx context.Context, assetID string, timestamp int64) ([]*BrokerUserBalance, error) {
+	token, err := broker.SignToken("", 60)
+	if err != nil {
+		return nil, err
+	}
+
+	uri := fmt.Sprintf("/api/scan-assets?asset_id=%s&timestamp=%d", assetID, timestamp)
+	b, err := broker.Request(ctx, "GET", uri, nil, token)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Error
+		Data []*BrokerUserBalance `json:"data"`
 	}
 	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return nil, errors.New(string(b))

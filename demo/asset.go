@@ -62,3 +62,11 @@ func doAsset(ctx context.Context, b *sdk.Broker, userID string, assetID string) 
 
 	return asset
 }
+
+func doScanAssets(ctx context.Context, b *sdk.Broker, assetID string, timestamp int64) {
+	balances, err := b.ScanAssets(ctx, assetID, timestamp)
+	if err != nil {
+		log.Panicln(err)
+	}
+	printJSON("scan assets", balances)
+}
