@@ -9,11 +9,13 @@ import (
 
 // User user
 type User struct {
-	UserID   string `json:"user_id"`
-	BrokerID string `json:"broker_id,omitempty"`
-	FullName string `json:"full_name,omitempty"`
-	Avatar   string `json:"avatar_url,omitempty"`
-	Inside   bool   `json:"inside"`
+	UserID     string `json:"user_id"`
+	SessionID  string `json:"session_id,omitempty"`
+	SessionKey string `json:"session_key,omitempty"`
+	BrokerID   string `json:"broker_id,omitempty"`
+	FullName   string `json:"full_name,omitempty"`
+	Avatar     string `json:"avatar_url,omitempty"`
+	Inside     bool   `json:"inside"`
 }
 
 // CreateUser create user
