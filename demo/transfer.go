@@ -6,7 +6,7 @@ import (
 
 	sdk "github.com/fox-one/fox-wallet-sdk"
 	"github.com/fox-one/mixin-sdk/mixin"
-	"github.com/satori/go.uuid"
+	"github.com/gofrs/uuid"
 )
 
 func doTransfer(ctx context.Context, b *sdk.Broker, dapp *mixin.User, userID, assetID, amount, pin string) *sdk.Snapshot {
