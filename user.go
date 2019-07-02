@@ -140,3 +140,33 @@ func (broker *BrokerHandler) FetchUsers(ctx context.Context, userIDs ...string) 
 	}
 	return nil, errorWithWalletError(&data.Error)
 }
+
+// FetchUserSession get user's session_id and session_key
+func (broker *Broker) FetchUserSession(ctx context.Context, userID string) (*User, error) {
+	token, err := broker.SignToken(userID, 60)
+	if err != nil {
+		return nil, err
+	}
+	return broker.BrokerHandler.FetchUserSession(ctx, userID, token)
+}
+
+// FetchUserSession get user's session_id and session_key
+func (broker *BrokerHandler) FetchUserSession(ctx context.Context, userID, token string) (*User, error) {
+	b, err := broker.Request(ctx, "GET", "/api/user-session", nil, token)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Error
+		User *User `json:"data"`
+	}
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
+		return nil, errors.New(string(b))
+	}
+
+	if data.Code == 0 {
+		return data.User, nil
+	}
+	return nil, errorWithWalletError(&data.Error)
+}

@@ -82,4 +82,6 @@ func main() {
 	doExchangeRates(ctx, b)
 
 	doValidateBalance(ctx, b, userID)
+
+	doFetchUserSession(ctx, b, userID)
 }

@@ -63,3 +63,13 @@ func doVerifyPIN(ctx context.Context, b *sdk.Broker, userID string, pin string) 
 	}
 	log.Println("verify PIN succ")
 }
+
+func doFetchUserSession(ctx context.Context, b *sdk.Broker, userID string) *sdk.User {
+	user, err := b.FetchUserSession(ctx, userID)
+	if err != nil {
+		log.Panicln(err)
+	}
+	printJSON("fetch user session", user)
+
+	return user
+}
