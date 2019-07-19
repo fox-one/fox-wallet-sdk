@@ -21,7 +21,7 @@ func (broker *BrokerHandler) FetchAddresses(ctx context.Context, assetID, token 
 	paras := map[string]interface{}{
 		"asset_id": assetID,
 	}
-	b, err := broker.Request(ctx, "GET", "/api/wallet/addresses", paras, token)
+	b, err := broker.Request(ctx, "GET", "/api/addresses", paras, token)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (broker *BrokerHandler) UpsertAddress(ctx context.Context, addr *WithdrawAd
 		"account_name": addr.AccountName,
 		"account_tag":  addr.AccountTag,
 	}
-	b, err := broker.Request(ctx, "POST", "/api/wallet/address", paras, token)
+	b, err := broker.Request(ctx, "POST", "/api/address", paras, token)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (broker *Broker) DeleteAddress(ctx context.Context, userID, addressID, pin 
 
 // DeleteAddress delete user address
 func (broker *BrokerHandler) DeleteAddress(ctx context.Context, addressID, token string) error {
-	b, err := broker.Request(ctx, "DELETE", "/api/wallet/address/"+addressID, nil, token)
+	b, err := broker.Request(ctx, "DELETE", "/api/address/"+addressID, nil, token)
 	if err != nil {
 		return err
 	}
