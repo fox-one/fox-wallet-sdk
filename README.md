@@ -66,6 +66,8 @@ var (
     ErrInvalidTrace = errors.New("invalid trace id")
     // ErrAuthFailed auth failed
     ErrAuthFailed = errors.New("auth failed")
+    // ErrInvalidAddress code 1515, invalid address
+    ErrInvalidAddress = errors.New("invalid address")
 )
 ```
 
