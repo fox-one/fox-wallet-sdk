@@ -38,6 +38,8 @@ var (
 	ErrInvalidTrace = errors.New("invalid trace id")
 	// ErrAuthFailed auth failed
 	ErrAuthFailed = errors.New("auth failed")
+	// ErrInvalidAddress code 1515, invalid address
+	ErrInvalidAddress = errors.New("invalid address")
 )
 
 func errorWithWalletError(err *Error) error {
@@ -74,6 +76,8 @@ func errorWithWalletError(err *Error) error {
 		return ErrInvalidTrace
 	case 1514:
 		return ErrAuthFailed
+	case 1515:
+		return ErrInvalidAddress
 	}
 
 	return err
