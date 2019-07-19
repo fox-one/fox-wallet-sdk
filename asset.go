@@ -31,7 +31,8 @@ type Asset struct {
 type Chain struct {
 	Asset
 
-	Confirmations int `json:"confirmations"`
+	Fee           decimal.Decimal `json:"fee"`
+	Confirmations int             `json:"confirmations"`
 }
 
 // UserAddress user address
