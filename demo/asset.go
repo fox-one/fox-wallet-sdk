@@ -7,7 +7,7 @@ import (
 	sdk "github.com/fox-one/fox-wallet-sdk"
 )
 
-func doChains(ctx context.Context, b *sdk.Broker) []*sdk.Asset {
+func doChains(ctx context.Context, b *sdk.Broker) []*sdk.Chain {
 	chains, err := b.FetchChains(ctx)
 	if err != nil {
 		log.Panicln(err)

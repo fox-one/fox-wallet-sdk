@@ -44,6 +44,7 @@ func main() {
 
 	tmpPIN := "123456"
 	userID := doCreateUser(ctx, b, tmpPIN).UserID
+
 	doFetchUser(ctx, b, userID)
 	doFetchUsers(ctx, b, userID)
 
@@ -76,6 +77,15 @@ func main() {
 
 	doAsset(ctx, b, userID, assetID)
 	doAssets(ctx, b, userID)
+
+	doAddresses(ctx, b, userID, assetID)
+	addr := doUpsertAddress(ctx, b, userID, default_pin, &sdk.WithdrawAddress{
+		AssetID:   assetID,
+		PublicKey: publicKey,
+		Label:     "test",
+	})
+	doAddresses(ctx, b, userID, assetID)
+	doDeleteAddress(ctx, b, userID, addr.AddressID, default_pin)
 
 	doChains(ctx, b)
 	doNetworkAssets(ctx, b)

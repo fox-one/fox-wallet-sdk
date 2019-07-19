@@ -19,7 +19,8 @@ type TransferInput struct {
 
 // WithdrawAddress withdraw address
 type WithdrawAddress struct {
-	AssetID string `json:"asset_id"`
+	AddressID string `json:"address_id"`
+	AssetID   string `json:"asset_id"`
 
 	PublicKey string `json:"public_key,omitempty"`
 	Label     string `json:"label,omitempty"`

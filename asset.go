@@ -27,6 +27,13 @@ type Asset struct {
 	ChangeBTC decimal.Decimal `json:"change_btc"`
 }
 
+// Chain chain
+type Chain struct {
+	Asset
+
+	Confirmations int `json:"confirmations"`
+}
+
 // UserAddress user address
 type UserAddress struct {
 	UserID  string `json:"user_id"`
@@ -47,7 +54,7 @@ type UserAsset struct {
 	TransactionAmount decimal.Decimal `json:"transaction_amount"`
 	TransactionCount  int64           `json:"transaction_count"`
 	Asset             *Asset          `json:"asset,omitempty"`
-	Chain             *Asset          `json:"chain,omitempty"`
+	Chain             *Chain          `json:"chain,omitempty"`
 	Address           *UserAddress    `json:"address,omitempty"`
 
 	LastTransactionTime time.Time `json:"last_transaction_time,omitempty"`
@@ -69,7 +76,7 @@ type ValidateUserBalanceResp struct {
 }
 
 // FetchChains fetch chains
-func (broker *BrokerHandler) FetchChains(ctx context.Context) ([]*Asset, error) {
+func (broker *BrokerHandler) FetchChains(ctx context.Context) ([]*Chain, error) {
 	b, err := broker.Request(ctx, "GET", "/api/chains", nil, "")
 	if err != nil {
 		return nil, err
@@ -77,7 +84,7 @@ func (broker *BrokerHandler) FetchChains(ctx context.Context) ([]*Asset, error) 
 
 	var data struct {
 		Error
-		Chains []*Asset `json:"data"`
+		Chains []*Chain `json:"data"`
 	}
 	if err := jsoniter.Unmarshal(b, &data); err != nil {
 		return nil, errors.New(string(b))
