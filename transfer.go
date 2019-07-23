@@ -96,8 +96,11 @@ func (broker *BrokerHandler) Withdraw(ctx context.Context, input *WithdrawInput,
 		"amount":   input.Amount,
 		"memo":     input.Memo,
 	}
-	if len(input.PublicKey) > 0 {
+	if input.AddressID != "" {
+		paras["address_id"] = input.AddressID
+	} else if input.PublicKey != "" {
 		paras["public_key"] = input.PublicKey
+		paras["label"] = input.Label
 	} else {
 		paras["account_name"] = input.AccountName
 		if len(input.AccountTag) > 0 {
