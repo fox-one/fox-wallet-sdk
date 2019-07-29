@@ -45,6 +45,11 @@ func main() {
 	tmpPIN := "123456"
 	userID := doCreateUser(ctx, b, tmpPIN).UserID
 
+	{
+		token, err := b.MixinToken(ctx, userID, "GET", "/assets", "", time.Hour*24*365)
+		log.Println("token", token, err)
+	}
+
 	doFetchUser(ctx, b, userID)
 	doFetchUsers(ctx, b, userID)
 
