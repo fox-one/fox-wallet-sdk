@@ -3,7 +3,6 @@ package sdk
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	jsoniter "github.com/json-iterator/go"
@@ -223,8 +222,11 @@ func (broker *Broker) ScanAssets(ctx context.Context, assetID string, timestamp 
 		return nil, err
 	}
 
-	uri := fmt.Sprintf("/api/scan-assets?asset_id=%s&timestamp=%d", assetID, timestamp)
-	b, err := broker.Request(ctx, "GET", uri, nil, token)
+	params := map[string]interface{}{
+		"asset_id":  assetID,
+		"timestamp": timestamp,
+	}
+	b, err := broker.Request(ctx, "GET", "/api/scan-assets", params, token)
 	if err != nil {
 		return nil, err
 	}

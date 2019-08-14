@@ -8,16 +8,17 @@ import (
 
 	sdk "github.com/fox-one/fox-wallet-sdk"
 	"github.com/fox-one/mixin-sdk/mixin"
+	"github.com/jinzhu/now"
 	jsoniter "github.com/json-iterator/go"
 	log "github.com/sirupsen/logrus"
 )
 
 func printJSON(prefix string, item interface{}) {
-	msg, err := jsoniter.MarshalToString(item)
+	msg, err := jsoniter.MarshalIndent(item, "", "  ")
 	if err != nil {
 		log.Panicln(err)
 	}
-	log.Println(prefix, msg)
+	log.Println(prefix, string(msg))
 }
 
 func main() {
@@ -38,6 +39,7 @@ func main() {
 
 	ctx := context.TODO()
 	b := sdk.NewBroker(apiBase, brokerID, brokerSecret, brokerPINSecret)
+	doScanAssets(ctx, b, "f5ef6b5d-cc5a-3d90-b2c0-a2fd386e7a3c", now.BeginningOfWeek().UnixNano())
 
 	assetID := "965e5c6e-434c-3fa9-b780-c50f43cd955c"
 	publicKey := "0xe20FE5C04Fa6b044b720F8CA019Cd896881ED13B"
