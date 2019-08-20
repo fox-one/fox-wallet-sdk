@@ -26,3 +26,13 @@ func doSnapshots(ctx context.Context, b *sdk.Broker, userID string, assetID stri
 
 	return snapshots, nextOffset
 }
+
+func doPendingSnapshots(ctx context.Context, b *sdk.Broker, userIDs []string, chainID, assetID string) []*sdk.PendingDeposit {
+	snapshots, err := b.FetchPendingDeposits(ctx, userIDs, chainID, assetID)
+	if err != nil {
+		log.Panicln(err)
+	}
+	printJSON("fetch pending deposits", snapshots)
+
+	return snapshots
+}

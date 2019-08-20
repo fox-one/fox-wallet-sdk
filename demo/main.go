@@ -39,6 +39,7 @@ func main() {
 
 	ctx := context.TODO()
 	b := sdk.NewBroker(apiBase, brokerID, brokerSecret, brokerPINSecret)
+	doPendingSnapshots(ctx, b, []string{}, "", "")
 	doScanAssets(ctx, b, "f5ef6b5d-cc5a-3d90-b2c0-a2fd386e7a3c", now.BeginningOfWeek().UnixNano())
 
 	assetID := "965e5c6e-434c-3fa9-b780-c50f43cd955c"

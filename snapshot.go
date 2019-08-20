@@ -3,6 +3,8 @@ package sdk
 import (
 	"context"
 	"errors"
+	"strings"
+	"time"
 
 	jsoniter "github.com/json-iterator/go"
 )
@@ -106,4 +108,63 @@ func (broker *BrokerHandler) FetchSnapshots(ctx context.Context, assetID, offset
 		return data.Snapshots, data.NextOffset, nil
 	}
 	return nil, offset, errorWithWalletError(&data.Error)
+}
+
+// PendingDeposit pending deposit
+type PendingDeposit struct {
+	Type string `json:"type"`
+
+	TransactionID   string    `json:"transaction_id"`
+	TransactionHash string    `json:"transaction_hash"`
+	CreatedAt       time.Time `json:"created_at"`
+
+	AssetID       string `json:"asset_id,omitempty"`
+	ChainID       string `json:"chain_id,omitempty"`
+	Amount        string `json:"amount"`
+	Confirmations int    `json:"confirmations"`
+	Threshold     int    `json:"threshold"`
+
+	BrokerID    string `json:"broker_id"`
+	UserID      string `json:"user_id"`
+	Sender      string `json:"sender"`
+	PublicKey   string `json:"public_key"`
+	AccountName string `json:"account_name"`
+	AccountTag  string `json:"account_tag"`
+}
+
+// FetchPendingDeposits fetch pending deposits
+func (broker *Broker) FetchPendingDeposits(ctx context.Context, userIDs []string, chainID, assetID string) ([]*PendingDeposit, error) {
+	token, err := broker.SignToken("", 60)
+	if err != nil {
+		return nil, err
+	}
+
+	return broker.BrokerHandler.FetchPendingDeposits(ctx, userIDs, chainID, assetID, token)
+}
+
+// FetchPendingDeposits fetch pending deposits
+func (broker *BrokerHandler) FetchPendingDeposits(ctx context.Context, userIDs []string, chainID, assetID string, token string) ([]*PendingDeposit, error) {
+	paras := map[string]interface{}{
+		"user_ids": strings.Join(userIDs, ","),
+		"asset_id": assetID,
+		"chain_id": chainID,
+	}
+
+	b, err := broker.Request(ctx, "GET", "/api/snapshots/pending-deposits", paras, token)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Error
+		Snapshots []*PendingDeposit `json:"data"`
+	}
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
+		return nil, errors.New(string(b))
+	}
+
+	if data.Code == 0 {
+		return data.Snapshots, nil
+	}
+	return nil, errorWithWalletError(&data.Error)
 }
