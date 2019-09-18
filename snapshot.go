@@ -168,3 +168,55 @@ func (broker *BrokerHandler) FetchPendingDeposits(ctx context.Context, userIDs [
 	}
 	return nil, errorWithWalletError(&data.Error)
 }
+
+// ExternalSnapshot external snapshot
+type ExternalSnapshot struct {
+	SnapshotID string `json:"snapshot_id"`
+	Source     string `json:"source"`
+	UserID     string `json:"user_id"`
+	AssetID    string `json:"asset_id"`
+	Amount     string `json:"amount"`
+	CreatedAt  int64  `json:"created_at"`
+}
+
+// FetchExternalSnapshots fetch external snapshots
+func (broker *Broker) FetchExternalSnapshots(ctx context.Context, userID string, from, to int64, limit int) ([]*ExternalSnapshot, error) {
+	token, err := broker.SignToken("", 60)
+	if err != nil {
+		return nil, err
+	}
+
+	return broker.BrokerHandler.FetchExternalSnapshots(ctx, userID, from, to, limit, token)
+}
+
+// FetchExternalSnapshots fetch external snapshots
+func (broker *BrokerHandler) FetchExternalSnapshots(ctx context.Context, userID string, from, to int64, limit int, token string) ([]*ExternalSnapshot, error) {
+	paras := map[string]interface{}{
+		"from":  from,
+		"limit": limit,
+	}
+	if userID != "" {
+		paras["user_id"] = userID
+	}
+	if to > from {
+		paras["to"] = to
+	}
+
+	b, err := broker.Request(ctx, "GET", "/api/snapshots/external", paras, token)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Error
+		Snapshots []*ExternalSnapshot `json:"data"`
+	}
+	if err := jsoniter.Unmarshal(b, &data); err != nil {
+		return nil, errors.New(string(b))
+	}
+
+	if data.Code == 0 {
+		return data.Snapshots, nil
+	}
+	return nil, errorWithWalletError(&data.Error)
+}

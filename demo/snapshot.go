@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"time"
 
 	sdk "github.com/fox-one/fox-wallet-sdk"
 )
@@ -33,6 +34,16 @@ func doPendingSnapshots(ctx context.Context, b *sdk.Broker, userIDs []string, ch
 		log.Panicln(err)
 	}
 	printJSON("fetch pending deposits", snapshots)
+
+	return snapshots
+}
+
+func doExternalSnapshots(ctx context.Context, b *sdk.Broker) []*sdk.ExternalSnapshot {
+	snapshots, err := b.FetchExternalSnapshots(ctx, "", 0, time.Now().UnixNano(), 100)
+	if err != nil {
+		log.Panicln(err)
+	}
+	printJSON("fetch external snapshots", snapshots)
 
 	return snapshots
 }
