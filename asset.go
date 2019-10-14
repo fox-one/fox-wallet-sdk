@@ -40,12 +40,16 @@ type UserAddress struct {
 	UserID  string `json:"user_id"`
 	ChainID string `json:"chain_id"`
 
-	PublicKey   string `json:"public_key"`
-	AccountName string `json:"account_name"`
-	AccountTag  string `json:"account_tag"`
+	Destination string `json:"destination,omitempty"`
+	Tag         string `json:"tag,omitempty"`
 
 	Confirmations  int     `json:"confirmations"`
 	Capitalization float64 `json:"capitalization"`
+
+	// TODO Deprecated
+	PublicKey   string `json:"public_key"`
+	AccountName string `json:"account_name"`
+	AccountTag  string `json:"account_tag"`
 }
 
 // UserAsset user asset

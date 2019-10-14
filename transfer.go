@@ -21,10 +21,13 @@ type TransferInput struct {
 type WithdrawAddress struct {
 	AddressID string `json:"address_id"`
 	AssetID   string `json:"asset_id"`
-
-	PublicKey string `json:"public_key,omitempty"`
 	Label     string `json:"label,omitempty"`
 
+	Destination string `json:"destination,omitempty"`
+	Tag         string `json:"tag,omitempty"`
+
+	// TODO Deprecated
+	PublicKey   string `json:"public_key,omitempty"`
 	AccountName string `json:"account_name,omitempty"`
 	AccountTag  string `json:"account_tag,omitempty"`
 }
@@ -90,22 +93,28 @@ func (broker *Broker) Withdraw(ctx context.Context, userID, pin string, input *W
 // Withdraw withdraw to address
 //	address_id, opponent_id, amount, traceID, memo
 func (broker *BrokerHandler) Withdraw(ctx context.Context, input *WithdrawInput, token string) (*Snapshot, error) {
+	if input.Destination == "" {
+		if input.PublicKey != "" {
+			input.Destination = input.PublicKey
+			input.Tag = ""
+		} else {
+			input.Destination = input.AccountName
+			input.Tag = input.AccountTag
+		}
+	}
+
 	paras := map[string]interface{}{
 		"asset_id": input.AssetID,
 		"trace_id": input.TraceID,
 		"amount":   input.Amount,
 		"memo":     input.Memo,
+		"label":    input.Label,
 	}
 	if input.AddressID != "" {
 		paras["address_id"] = input.AddressID
-	} else if input.PublicKey != "" {
-		paras["public_key"] = input.PublicKey
-		paras["label"] = input.Label
 	} else {
-		paras["account_name"] = input.AccountName
-		if len(input.AccountTag) > 0 {
-			paras["account_tag"] = input.AccountTag
-		}
+		paras["destination"] = input.Destination
+		paras["tag"] = input.Tag
 	}
 	b, err := broker.Request(ctx, "POST", "/api/withdraw", paras, token)
 	if err != nil {

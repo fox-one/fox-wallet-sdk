@@ -51,12 +51,21 @@ func (broker *Broker) UpsertAddress(ctx context.Context, userID, pin string, add
 
 // UpsertAddress add/update user address
 func (broker *BrokerHandler) UpsertAddress(ctx context.Context, addr *WithdrawAddress, token string) (*WithdrawAddress, error) {
+	if addr.Destination == "" {
+		if addr.PublicKey != "" {
+			addr.Destination = addr.PublicKey
+			addr.Tag = ""
+		} else {
+			addr.Destination = addr.AccountName
+			addr.Tag = addr.AccountTag
+		}
+	}
+
 	paras := map[string]interface{}{
-		"asset_id":     addr.AssetID,
-		"public_key":   addr.PublicKey,
-		"label":        addr.Label,
-		"account_name": addr.AccountName,
-		"account_tag":  addr.AccountTag,
+		"asset_id":    addr.AssetID,
+		"label":       addr.Label,
+		"destination": addr.Destination,
+		"tag":         addr.Tag,
 	}
 	b, err := broker.Request(ctx, "POST", "/api/address", paras, token)
 	if err != nil {

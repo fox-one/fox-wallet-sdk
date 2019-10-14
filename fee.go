@@ -9,16 +9,20 @@ import (
 
 // FetchWithdrawFee fetch withdraw fee
 func (broker *BrokerHandler) FetchWithdrawFee(ctx context.Context, input *WithdrawAddress) (*Asset, string, error) {
-	paras := map[string]interface{}{
-		"asset_id": input.AssetID,
-	}
-	if len(input.PublicKey) > 0 {
-		paras["public_key"] = input.PublicKey
-	} else {
-		paras["account_name"] = input.AccountName
-		if len(input.AccountTag) > 0 {
-			paras["account_tag"] = input.AccountTag
+	if input.Destination == "" {
+		if input.PublicKey != "" {
+			input.Destination = input.PublicKey
+			input.Tag = ""
+		} else {
+			input.Destination = input.AccountName
+			input.Tag = input.AccountTag
 		}
+	}
+
+	paras := map[string]interface{}{
+		"asset_id":    input.AssetID,
+		"destination": input.Destination,
+		"tag":         input.Tag,
 	}
 	b, err := broker.Request(ctx, "POST", "/api/withdraw-fee", paras, "")
 	if err != nil {

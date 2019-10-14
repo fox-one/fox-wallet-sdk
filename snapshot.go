@@ -127,6 +127,10 @@ type PendingDeposit struct {
 	BrokerID    string `json:"broker_id"`
 	UserID      string `json:"user_id"`
 	Sender      string `json:"sender"`
+	Destination string `json:"destination"`
+	Tag         string `json:"tag"`
+
+	// TODO Deprecated
 	PublicKey   string `json:"public_key"`
 	AccountName string `json:"account_name"`
 	AccountTag  string `json:"account_tag"`
