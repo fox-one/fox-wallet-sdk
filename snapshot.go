@@ -11,6 +11,7 @@ import (
 
 // Snapshot snapshot
 type Snapshot struct {
+	ID         int64  `json:"id"`
 	SnapshotID string `json:"snapshot_id"`
 	TraceID    string `json:"trace_id"`
 
