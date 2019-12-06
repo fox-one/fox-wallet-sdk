@@ -73,7 +73,7 @@ func (b *Broker) PINToken(pin string, nonce ...string) (string, string, error) {
 
 // EncryptPIN encrypt pin
 func (b *Broker) EncryptPIN(pin, nonce string) (string, error) {
-	if len(pin) != 6 {
+	if len(pin) == 0 {
 		return "", fmt.Errorf("invalid pin")
 	}
 
