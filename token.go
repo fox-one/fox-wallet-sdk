@@ -3,7 +3,6 @@ package sdk
 import (
 	"context"
 	"errors"
-	"log"
 	"time"
 
 	jsoniter "github.com/json-iterator/go"
@@ -33,7 +32,6 @@ func (broker *BrokerHandler) MixinToken(ctx context.Context, method, uri, body, 
 		return "", err
 	}
 
-	log.Println(string(b))
 	var data struct {
 		Error
 		Data struct {
