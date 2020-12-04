@@ -15,6 +15,14 @@ type TransferInput struct {
 	Amount     string `json:"amount,omitempty"`
 	TraceID    string `json:"trace_id,omitempty"`
 	Memo       string `json:"memo,omitempty"`
+
+	// OpponentKey used for raw transaction
+	OpponentKey string `json:"opponent_key,omitempty"`
+
+	OpponentMultisig struct {
+		Receivers []string `json:"receivers,omitempty"`
+		Threshold uint8    `json:"threshold,omitempty"`
+	} `json:"opponent_multisig,omitempty"`
 }
 
 // WithdrawAddress withdraw address
@@ -54,12 +62,23 @@ func (broker *Broker) Transfer(ctx context.Context, userID, pin string, input *T
 // Transfer transfer to account
 func (broker *BrokerHandler) Transfer(ctx context.Context, input *TransferInput, token string) (*Snapshot, error) {
 	paras := map[string]interface{}{
-		"asset_id":    input.AssetID,
-		"opponent_id": input.OpponentID,
-		"trace_id":    input.TraceID,
-		"amount":      input.Amount,
-		"memo":        input.Memo,
+		"asset_id": input.AssetID,
+		"trace_id": input.TraceID,
+		"amount":   input.Amount,
+		"memo":     input.Memo,
 	}
+
+	if input.OpponentID != "" {
+		paras["opponent_id"] = input.OpponentID
+	} else if input.OpponentKey != "" {
+		paras["opponent_key"] = input.OpponentKey
+	} else {
+		paras["opponent_multisig"] = map[string]interface{}{
+			"receivers": input.OpponentMultisig.Receivers,
+			"threshold": input.OpponentMultisig.Threshold,
+		}
+	}
+
 	b, err := broker.Request(ctx, "POST", "/api/transfer", paras, token)
 	if err != nil {
 		return nil, err
